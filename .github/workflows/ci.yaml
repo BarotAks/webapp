@@ -32,14 +32,5 @@ jobs:
 
             cat .env
   
-        - name: Configure MySQL
-          run: |
-            sudo yum update -y
-            sudo yum install -y curl
-            sudo systemctl start mysqld
-            sudo systemctl enable mysqld
-            sudo systemctl status mysqld
-            mysql -u root -p"root" -e "CREATE DATABASE webapp;"
-  
         - name: Run Unit Tests
           run: npm test
