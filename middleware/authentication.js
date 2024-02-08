@@ -4,12 +4,11 @@ const User = require('../models/users');
 
 const authenticate = async (req, res, next) => {
   try {
-
     // Skip authentication for certain endpoints
-    if (req.path === '/healthz' || req.path === '/v1/user') {
+    if (req.path === '/healthz' || req.path === '/v1/user' || req.path === '*') {
         return next();
-      }
-      
+    }
+
     // Extract credentials from Basic Authentication header
     const credentials = basicAuth(req);
 

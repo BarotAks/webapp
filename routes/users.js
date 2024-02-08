@@ -5,6 +5,37 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/users');
 const sequelize = require('../config/database');
+const bodyParser = require('body-parser'); // Import bodyParser
+const { Op } = require('sequelize');
+
+// Middleware to handle unsupported methods and payload checks
+router.use('/healthz', bodyParser.json());
+router.use('/healthz', (req, res, next) => {
+    if (req.method !== 'GET') {
+        // Reject non-GET requests
+        console.log(`Rejected ${req.method} request at /healthz. Only GET requests are allowed.`);
+        res.status(405).header('Allow', 'GET').header('Cache-Control', 'no-cache, no-store, must-revalidate').send();
+    } else if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
+        // Reject requests with query parameters or body payload
+        console.log(`Rejected GET request at /healthz with query parameters or body payload.`);
+        res.status(400).json({ error: 'Query parameters or body payload are not allowed for health check.' });
+    } else {
+      next();
+   }   
+});
+
+// Health endpoint
+router.get('/healthz', async (req, res) => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connection successful.');
+        res.status(200).header('Cache-Control', 'no-cache, no-store, must-revalidate').send('OK');
+    } catch (error) {
+        console.error('Database connection error:', error);
+        console.log('Database connection failed.');
+        res.status(503).header('Cache-Control', 'no-cache, no-store, must-revalidate').json({ error: 'Service Unavailable' });
+    }
+});
 
 // Get user information
 router.get('/v1/user/self', async (req, res) => {
@@ -16,6 +47,11 @@ router.get('/v1/user/self', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+          // Check for query parameters
+          if (Object.keys(req.query).length > 0) {
+            return res.status(400).json({ error: 'Query parameters are not allowed for this endpoint' });
+          }
     
     res.status(200).json(user);
   } catch (error) {
@@ -28,6 +64,21 @@ router.get('/v1/user/self', async (req, res) => {
 router.put('/v1/user/self', async (req, res) => {
     try {
       const { first_name, last_name, password } = req.body;
+
+      // Check for blank request body
+      if (!first_name && !last_name && !password) {
+        return res.status(400).json({ error: 'Request body cannot be blank. Please provide at least one field to update.' });
+      }
+
+      // Check for extra fields in the request body
+      const extraFields = Object.keys(req.body).filter(field => !['first_name', 'last_name', 'password'].includes(field));
+      if (extraFields.length > 0) {
+        return res.status(400).json({ error: 'Extra fields are not allowed. Please provide only first_name, last_name, and password' });
+      }
+     // Check for query parameters
+         if (Object.keys(req.query).length > 0) {
+            return res.status(400).json({ error: 'Query parameters are not allowed for this endpoint' });
+                      }
   
       // Fetch user by ID
       const user = await User.findByPk(req.user.id);
@@ -39,8 +90,7 @@ router.put('/v1/user/self', async (req, res) => {
       if (first_name) user.first_name = first_name;
       if (last_name) user.last_name = last_name;
       if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
+        user.password = await bcrypt.hash(password, 10);
       }
       
       // Update account_updated field
@@ -54,6 +104,7 @@ router.put('/v1/user/self', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });  
+
   
 // Create a new user
 router.post('/v1/user', async (req, res) => {
@@ -119,16 +170,9 @@ router.post('/v1/user', async (req, res) => {
   }
 });
 
-       
-// Health endpoint
-router.get('/healthz', async (req, res) => {
-    try {
-      await sequelize.authenticate();
-      res.status(200).send('OK');
-    } catch (error) {
-      console.error('Database connection error:', error);
-      res.status(503).send('Service Unavailable');
-    }
+// Wildcard route handler for 404 Not Found
+router.use('*', (req, res) => {
+    res.status(404).json({ error: 'Not Found' });
   });
 
 module.exports = router;
