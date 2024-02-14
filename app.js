@@ -5,6 +5,7 @@ const app = express();
 const sequelize = require('./config/database');
 const usersRouter = require('./routes/users');
 const authenticate = require('./middleware/authentication');
+const { Model } = require('sequelize');
 
 // Middleware
 app.use(express.json());
@@ -23,3 +24,5 @@ app.listen(PORT, async () => {
     console.error('Unable to connect to the database:', error);
   }
 });
+
+module.exports = app;
