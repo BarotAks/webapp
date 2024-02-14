@@ -35,6 +35,14 @@ jobs:
                 echo "DB_HOST=127.0.0.1" >> .env
                 cat .env
 
+            - name: Configure MySQL
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y curl
+                  sudo systemctl start mysql
+                  sudo systemctl status mysql
+                  mysql -u root -p"root" -e "CREATE DATABASE webapp;"
+
             - name: Run Integration tests
               run: npm run test:integration
 
