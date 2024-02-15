@@ -17,7 +17,7 @@ jobs:
             - name: Setup node
               uses: actions/setup-node@v2
               with:
-                node-version: '14'
+                node-version: 14
             
             - name: Install dependencies
               run: npm install 
@@ -37,10 +37,7 @@ jobs:
                 sudo apt-get install -y curl  
                 sudo systemctl start mysql
                 sudo systemctl status mysql
-                mysql -u root -p"root" -e "CREATE DATABASE webapp;"
-          
-            - name: Sleep for 30 seconds
-              run: sleep 30   
+                mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
 
             - name: Run Integration tests
               run: npm run test:integration
