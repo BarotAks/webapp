@@ -32,7 +32,7 @@ jobs:
                 echo "DB_PASSWORD=root" >> .env
                 echo "DB_NAME=webapp" >> .env
                 echo "PORT=3306" >> .env
-                echo "DB_HOST=127.0.0.1" >> .env
+                echo "DB_HOST=localhost" >> .env
                 cat .env
 
             - name: Configure MySQL
