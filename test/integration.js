@@ -18,9 +18,13 @@ after(async () => {
 });
 
 beforeEach(async () => {
-  // Truncate the User table before each test to start with a clean slate
-  await User.truncate({ cascade: true });
-});
+    await User.sync({ force: true }); // Sync models to database with force option
+  });
+
+// beforeEach(async () => {
+//   // Truncate the User table before each test to start with a clean slate
+//   await User.truncate({ cascade: true });
+// });
 
 describe('Integration tests for /v1/user endpoint', () => {
     it('Test 1: Create an account and validate existence using GET', async () => {
