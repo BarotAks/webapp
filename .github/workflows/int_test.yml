@@ -1,0 +1,45 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+    build:
+        name: Integration Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup node
+              uses: actions/setup-node@v2
+              with:
+                node-version: 14
+            
+            - name: Install dependencies
+              run: npm install 
+
+            - name: Display .env file
+              run: |
+                echo "DB_USER=root" >> .env
+                echo "DB_PASSWORD=root" >> .env
+                echo "DB_NAME=webapp" >> .env
+                echo "PORT=3306" >> .env
+                echo "DB_HOST=localhost" >> .env
+                cat .env
+                
+            - name: Configure MySQL
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y curl  
+                sudo apt-get install -y mysql-client
+                sudo systemctl start mysql
+                sudo systemctl status mysql
+                sleep 10
+                mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
+
+            - name: Run Integration tests
+              run: npm run test:integration
