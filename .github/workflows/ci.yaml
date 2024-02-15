@@ -41,4 +41,4 @@ jobs:
               mysql -u root -p"root" -e "CREATE DATABASE webapp;"
               
         - name: Run Unit Tests
-          run: npm test
+          run: npm run test
