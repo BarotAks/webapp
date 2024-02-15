@@ -43,7 +43,6 @@ describe('Integration tests for /v1/user endpoint', () => {
         .auth(newUser.username, newUser.password); // Include Basic Authentication headers
       expect(getUserResponse.statusCode).to.equal(200); // Check if user exists in the database
       expect(getUserResponse.body.username).to.equal(newUser.username); // Validate user details
-    //   expect(getUserResponse.body.username).to.equal('invalidusername'); // This will fail the test
     });
   
     it('Test 2: Update account and validate changes using GET', async () => {
@@ -78,10 +77,11 @@ describe('Integration tests for /v1/user endpoint', () => {
       expect(getUserResponse.body.first_name).to.equal(updateData.first_name); // Validate updated details
       expect(getUserResponse.body.last_name).to.equal(updateData.last_name);
     });
+});
 
         // // After all tests are finished, exit with code 0 (success)
         // after(() => {
         //     process.exit(0);
         //   });
-  });
+
   
