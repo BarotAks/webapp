@@ -23,10 +23,6 @@ jobs:
               run: npm install 
 
             - name: Display .env file
-              env:
-                DB_USER: ${{ secrets.DB_USER }}
-                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-                DB_NAME: ${{ secrets.DB_NAME }}
               run: |
                 echo "DB_USER=root" >> .env
                 echo "DB_PASSWORD=root" >> .env
