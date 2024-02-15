@@ -37,7 +37,7 @@ jobs:
                 sudo apt-get install -y curl  
                 sudo systemctl start mysql
                 sudo systemctl status mysql
-                mysql -u root -p"root" -e "CREATE DATABASE webapp;"
+                mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
           
             - name: Sleep for 30 seconds
               run: sleep 30   
