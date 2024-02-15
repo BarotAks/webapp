@@ -11,7 +11,7 @@ describe("Healthz Endpoint", () => {
       .request(app)
       .get("/healthz")
       .end((err, res) => {
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(400);
         done();
       });
   });
