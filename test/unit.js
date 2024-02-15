@@ -15,9 +15,4 @@ describe("Healthz Endpoint", () => {
         done();
       });
   });
-
-  // After all tests are finished, exit with code 0 (success)
-  after(() => {
-    process.exit(0);
-  });
 });
