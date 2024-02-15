@@ -78,10 +78,3 @@ describe('Integration tests for /v1/user endpoint', () => {
       expect(getUserResponse.body.last_name).to.equal(updateData.last_name);
     });
 });
-
-        // // After all tests are finished, exit with code 0 (success)
-        // after(() => {
-        //     process.exit(0);
-        //   });
-
-  
