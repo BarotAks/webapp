@@ -39,11 +39,13 @@ jobs:
                 sudo systemctl status mysql
                 mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
           
-            - name: Sleep for 30 seconds
-              run: sleep 30   
+            - name: Sleep for 40 seconds
+              run: sleep 40   
 
             - name: Run Integration tests
-              run: npm run test:integration
+              run: | 
+                npm run test:integration
+                exit
 
             - name: Move to Next Step
               run: exit 0
