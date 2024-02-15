@@ -43,9 +43,9 @@ jobs:
 
         - name: Run Unit Tests
           run: |
-          if npm run test; then
-            echo "Tests passed successfully."
-          else
-            echo "Tests failed."
-            exit 1
-          fi
+              if npm run test; then
+                echo "Tests passed successfully."
+              else
+                echo "Tests failed."
+                exit 1
+              fi
