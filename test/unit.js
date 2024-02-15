@@ -8,7 +8,7 @@ const expect = chai.expect;
 describe("Healthz Endpoint", () => {
   it("should return a 200 OK response if the database is connected", (done) => {
     chai
-      .request({})
+      .request(app)
       .get("/healthz")
       .end((err, res) => {
         expect(res).to.have.status(200);
