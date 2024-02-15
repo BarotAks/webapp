@@ -35,11 +35,10 @@ jobs:
               run: |
                 sudo apt-get update
                 sudo apt-get install -y curl  
+                sudo apt-get install -y mysql-client
                 sudo systemctl start mysql
                 sudo systemctl status mysql
                 mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
 
             - name: Run Integration tests
               run: npm run test:integration
-
-            
