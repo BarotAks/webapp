@@ -42,8 +42,8 @@ describe('Integration tests for /v1/user endpoint', () => {
         .get(`/v1/user/self`)
         .auth(newUser.username, newUser.password); // Include Basic Authentication headers
       expect(getUserResponse.statusCode).to.equal(200); // Check if user exists in the database
-    //   expect(getUserResponse.body.username).to.equal(newUser.username); // Validate user details
-      expect(getUserResponse.body.username).to.equal('invalidusername'); // This will fail the test
+      expect(getUserResponse.body.username).to.equal(newUser.username); // Validate user details
+    //   expect(getUserResponse.body.username).to.equal('invalidusername'); // This will fail the test
     });
   
     it('Test 2: Update account and validate changes using GET', async () => {
