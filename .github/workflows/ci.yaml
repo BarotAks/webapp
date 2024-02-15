@@ -42,4 +42,10 @@ jobs:
               mysql -u root -p"root" -e "CREATE DATABASE webapp;"
 
         - name: Run Unit Tests
-          run: npm run test
+          run: |
+          if npm run test; then
+            echo "Tests passed successfully."
+          else
+            echo "Tests failed."
+            exit 1
+          fi
