@@ -32,14 +32,13 @@ jobs:
                 echo "DB_PASSWORD=root" >> .env
                 echo "DB_NAME=webapp" >> .env
                 echo "PORT=3306" >> .env
-                echo "DB_HOST=127.0.0.1" >> .env
+                echo "DB_HOST=localhost" >> .env
                 cat .env
                 
             - name: Configure MySQL
               run: |
                 sudo apt-get update
-                sudo apt-get install -y mysql-server
-                sudo service mysql start   
+                sudo apt-get install -y curl  
                 sudo systemctl start mysql
                 sudo systemctl status mysql
                 mysql -u root -p"root" -e "CREATE DATABASE webapp;"
