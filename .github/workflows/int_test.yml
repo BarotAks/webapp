@@ -22,6 +22,12 @@ jobs:
             - name: Install dependencies
               run: npm install
 
+            - name: Configure MySQL
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y mysql-server
+                sudo service mysql start    
+
             - name: Display .env file
               env:
                 DB_USER: ${{ secrets.DB_USER }}
@@ -35,11 +41,10 @@ jobs:
                 echo "DB_HOST=127.0.0.1" >> .env
                 cat .env
 
-            - name: Configure MySQL
-              run: |
-                  mysql -u root -p"root" -e "CREATE DATABASE webapp;"
-
             - name: Run Integration tests
               run: npm run test:integration
+
+            - name: Move to Next Step
+              run: exit 0
 
             
