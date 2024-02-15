@@ -20,13 +20,7 @@ jobs:
                 node-version: '14'
             
             - name: Install dependencies
-              run: npm install
-
-            - name: Configure MySQL
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y mysql-server
-                sudo service mysql start    
+              run: npm install 
 
             - name: Display .env file
               env:
@@ -40,6 +34,12 @@ jobs:
                 echo "PORT=3306" >> .env
                 echo "DB_HOST=127.0.0.1" >> .env
                 cat .env
+                
+            - name: Configure MySQL
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y mysql-server
+                sudo service mysql start   
 
             - name: Run Integration tests
               run: npm run test:integration
