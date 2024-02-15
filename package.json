@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/unit.js",
+    "test": "mocha test/unit.js --exit",
     "test:integration": "mocha test/integration.js --exit"
   },
   "author": "",
