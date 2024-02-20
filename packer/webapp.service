@@ -1,0 +1,16 @@
+[Unit]
+Description=webapp
+After=network.target
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+Environment=NODE_PORT=3000
+WorkingDirectory=/opt/application/webapp
+ExecStart=/usr/bin/node /opt/application/webapp/app.js
+Restart=on-failure
+
+
+[Install]
+WantedBy=multi-user.target

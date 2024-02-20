@@ -1,0 +1,61 @@
+name: Packer AMI Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ami:
+    name: Build Packer AMI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: '1.8.6'
+
+      - name: Create ZIP Archive
+        run: zip -r webapp.zip . -x ".git/*" ".gitignore" ".github/*"
+
+      - name: Display ZIP File Location
+        run: |
+          echo "ZIP file location: $GITHUB_WORKSPACE/webapp.zip"
+          
+      - name: Print Contents of Directory
+        run: ls -l
+      
+      - name: List contents of webapp.zip
+        run: unzip -l ./webapp.zip
+      
+      - name: Initialize Packer
+        run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
+        working-directory: packer
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Use gcloud CLI
+        run: gcloud info 
+        
+      - name: Run Integration tests
+        run: |
+          if npm run test:integration; then
+            echo "Tests passed successfully."
+          else
+            echo "Tests failed."
+            exit 1
+          fi
+          
+      - name: Build AMI with Packer
+        run: packer build gcp-centos.pkr.hcl
+        working-directory: packer

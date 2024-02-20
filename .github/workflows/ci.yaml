@@ -1,45 +1,50 @@
 name: CI Workflow
 
 on:
-    pull_request:
-      branches:
-        - main
-  
+  pull_request:
+    branches:
+      - main
+
 jobs:
-    build:
-      name: CI Workflow
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v2
-  
-        - name: Set Up Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: 14
-  
-        - name: Install Dependencies
-          run: npm install
-  
-        - name: Display .env file
-          run: |
-            echo "DB_USER=root" >> .env
-            echo "DB_PASSWORD=root" >> .env
-            echo "DB_NAME=webapp" >> .env
-            echo "PORT=3306" >> .env
-            echo "DB_HOST=localhost" >> .env
+  build:
+    name: CI Workflow
+    runs-on: ubuntu-latest
 
-            cat .env
-  
-        - name: Configure MySQL
-          run: |
-              sudo apt-get update
-              sudo apt-get install -y curl
-              sudo systemctl start mysql
-              sudo systemctl status mysql
-              sleep 10
-              mysql -u root -p"root" -e "CREATE DATABASE webapp;"
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-        - name: Run Unit Tests
-          run: npm run test
+      - name: Set Up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Display .env file
+        run: |
+          echo "DB_USER=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
+          echo "DB_NAME=webapp" >> .env
+          echo "PORT=3306" >> .env
+          echo "DB_HOST=localhost" >> .env
+          cat .env
+
+      - name: Configure MySQL
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y curl
+            sudo systemctl start mysql
+            sudo systemctl status mysql
+            sleep 10
+            mysql -u root -p"root" -e "CREATE DATABASE webapp;"
+
+      - name: Run Unit Tests
+        run: |
+          if npm run test; then
+            echo "Tests passed successfully."
+          else
+            echo "Tests failed."
+            exit 1
+          fi
