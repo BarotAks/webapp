@@ -35,8 +35,13 @@ jobs:
         run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
         working-directory: packer
       
+      - name: Format Packer template
+        run: packer fmt -check -diff gcp-centos.pkr.hcl 
+        working-directory: packer
+
       - name: Validate Packer template
-        run: packer fmt -check -diff && packer validate gcp-centos.pkr.hcl        
+        run: packer validate gcp-centos.pkr.hcl   
+        working-directory: packer    
   
       - name: List contents of webapp.zip
         run: unzip -l ./webapp.zip  
