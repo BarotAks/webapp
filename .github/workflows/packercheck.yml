@@ -79,15 +79,6 @@ jobs:
       - name: Install dependencies
         run: npm install 
 
-      - name: Run Integration tests
-        run: |
-          if npm run test:integration; then
-            echo "Tests passed successfully."
-          else
-            echo "Tests failed."
-            exit 1
-          fi
-
       - name: Configure MySQL
         run: |
             sudo apt-get update
@@ -97,6 +88,15 @@ jobs:
             sudo systemctl status mysql
             sleep 10
             mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
+
+      - name: Run Integration tests
+        run: |
+          if npm run test:integration; then
+            echo "Tests passed successfully."
+          else
+            echo "Tests failed."
+            exit 1
+          fi
 
       - name: Build AMI with Packer
         run: packer build gcp-centos.pkr.hcl
