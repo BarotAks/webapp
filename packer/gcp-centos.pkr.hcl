@@ -28,13 +28,24 @@ variable "zone" {
   default = "us-central1-a"
 }
 
+variable "ssh_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "service_account_key_file" {
+  type    = string
+  default = "C:/Users/akshi/Downloads/spring-outlet-406505-323d4ae602d4.json"
+}
+
 # Define builders
 source "googlecompute" "webapp_ami" {
-  project_id   = var.gcp_project_id
-  source_image = var.source_image
-  machine_type = "n1-standard-1"
-  zone         = var.zone
-  account_file = var.service_account_email
+  project_id       = var.gcp_project_id
+  source_image     = var.source_image
+  machine_type     = "n1-standard-1"
+  zone             = var.zone
+  ssh_username     = var.ssh_username
+  credentials_file = var.service_account_key_file
 }
 
 # Build custom image
@@ -52,7 +63,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "webapp.sh"
+    script = "./webapp.sh"
   }
 
   provisioner "shell" {
