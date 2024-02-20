@@ -10,6 +10,13 @@ jobs:
     name: Packer Status Check
     runs-on: ubuntu-latest
 
+    env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        PORT: ${{ secrets.PORT }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -56,6 +63,15 @@ jobs:
 
       - name: Use gcloud CLI
         run: gcloud info 
+
+      - name: Display .env file
+        run: |
+          echo "DB_USER=${DB_USER}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "DB_NAME=${DB_NAME}" >> .env
+          echo "PORT=${PORT}" >> .env
+          echo "DB_HOST=${DB_HOST}" >> .env
+          cat .env
 
       - name: Run Integration tests
         run: |

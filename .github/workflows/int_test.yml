@@ -10,6 +10,13 @@ jobs:
         name: Integration Tests
         runs-on: ubuntu-latest
 
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          PORT: ${{ secrets.PORT }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -24,11 +31,11 @@ jobs:
 
             - name: Display .env file
               run: |
-                echo "DB_USER=root" >> .env
-                echo "DB_PASSWORD=root" >> .env
-                echo "DB_NAME=webapp" >> .env
-                echo "PORT=3306" >> .env
-                echo "DB_HOST=localhost" >> .env
+                echo "DB_USER=${DB_USER}" >> .env
+                echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+                echo "DB_NAME=${DB_NAME}" >> .env
+                echo "PORT=${PORT}" >> .env
+                echo "DB_HOST=${DB_HOST}" >> .env
                 cat .env
                 
             - name: Configure MySQL
