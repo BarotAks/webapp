@@ -48,8 +48,8 @@ sudo chown -R csye6225:csye6225 /opt/application
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
 cd /opt/application/webapp
-npm install
-npm install mysql2@2.2.5
+sudo npm install
+sudo npm install mysql2@2.2.5
 
 # Create MySQL database and user
 echo "Creating MySQL database and user"
