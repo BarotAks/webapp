@@ -50,7 +50,7 @@ echo "Creating MySQL database and user"
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
 sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
-sudo mysql -e "CREATE USER 'root'@'localhost' IDENTIFIED BY 'root';"
+sudo mysql -e "CREATE USER IF NOT EXISTS'root'@'localhost' IDENTIFIED BY 'root';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
