@@ -27,7 +27,7 @@ sudo yum install -y mariadb-server
 
 # Set up csye6225 user
 echo "Setting up csye6225 user"
-sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
+sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
 
 # Create directory for the application
 echo "Creating directory for the application"
