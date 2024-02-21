@@ -21,6 +21,10 @@ sudo yum install -y unzip
 echo "Installing mariadb-server"
 sudo yum install -y mariadb-server 
 
+# Create csye6225 group if it doesn't exist
+echo "Creating csye6225 group"
+sudo groupadd -r csye6225
+
 # Set up csye6225 user
 echo "Setting up csye6225 user"
 sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
@@ -29,17 +33,17 @@ sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
 echo "Creating directory for the application"
 sudo mkdir -p /opt/application
 
-# Copy application artifact
+# Copy application artifact using file provisioner
 echo "Copying application artifact"
 sudo cp /home/admin/webapp.zip /opt/application/
-
-# Set ownership for the application files
-echo "Setting ownership for the application files"
-sudo chown -R csye6225:csye6225 /opt/application
 
 # Unzip the webapp artifact
 echo "Unzipping the application artifact"
 sudo unzip /opt/application/webapp.zip -d /opt/application/webapp
+
+# Set ownership for the application files
+echo "Setting ownership for the application files"
+sudo chown -R csye6225:csye6225 /opt/application
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"

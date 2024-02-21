@@ -41,6 +41,8 @@ source "googlecompute" "webapp_ami" {
   machine_type = "n1-standard-1"
   zone         = var.zone
   ssh_username = var.ssh_username
+
+  image_name = "webappami-${formatdate("YYYYMMDDHHmmss", timestamp())}"
 }
 
 # Build custom image
