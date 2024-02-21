@@ -35,7 +35,7 @@ sudo mkdir -p /opt/application
 
 # Copy application artifact using file provisioner
 echo "Copying application artifact"
-sudo cp /home/admin/webapp.zip /opt/application/
+sudo cp /home/csye6225/webapp.zip /opt/application/
 
 # Unzip the webapp artifact
 echo "Unzipping the application artifact"

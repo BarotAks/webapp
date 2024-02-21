@@ -30,7 +30,7 @@ variable "zone" {
 
 variable "ssh_username" {
   type    = string
-  default = "admin"
+  default = "csye6225"
 }
 
 
@@ -51,7 +51,7 @@ build {
 
   provisioner "file" {
     source      = "../webapp.zip"
-    destination = "/home/admin/webapp.zip"
+    destination = "/home/csye6225/webapp.zip"
   }
 
   provisioner "file" {
