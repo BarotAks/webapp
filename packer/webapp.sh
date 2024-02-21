@@ -22,8 +22,8 @@ echo "Installing mariadb-server"
 sudo yum install -y mariadb-server 
 
 # Create csye6225 group if it doesn't exist
-echo "Creating csye6225 group"
-sudo groupadd -r csye6225
+# echo "Creating csye6225 group"
+# sudo groupadd -r csye6225
 
 # Set up csye6225 user
 echo "Setting up csye6225 user"
@@ -50,8 +50,8 @@ echo "Creating MySQL database and user"
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
 sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
-sudo mysql -e "CREATE USER 'csye6225'@'localhost' IDENTIFIED BY 'aksh';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'csye6225'@'localhost';"
+sudo mysql -e "CREATE USER 'root'@'localhost' IDENTIFIED BY 'root';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Navigate to the webapp directory and install node modules
@@ -63,8 +63,8 @@ sudo touch .env
 sudo chmod 777 .env
 
 echo "DB_HOST=localhost" >> .env
-echo "DB_USER=csye6225" >> .env
-echo "DB_PASSWORD=aksh" >> .env
+echo "DB_USER=root" >> .env
+echo "DB_PASSWORD=root" >> .env
 echo "DB_NAME=webapp" >> .env
 
 # Copy the systemd service file and start the service
