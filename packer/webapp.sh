@@ -25,25 +25,25 @@ sudo yum install -y mariadb-server
 # echo "Creating csye6225 group"
 # sudo groupadd -r csye6225
 
-# Set up csye6225 user
-echo "Setting up csye6225 user"
-sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
+# # Set up csye6225 user
+# echo "Setting up csye6225 user"
+# sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
 
-# Create directory for the application
-echo "Creating directory for the application"
-sudo mkdir -p /opt/application
+# # Create directory for the application
+# echo "Creating directory for the application"
+# sudo mkdir -p /opt/application
 
-# Copy application artifact using file provisioner
-echo "Copying application artifact"
-sudo cp /home/csye6225/webapp.zip /opt/application/
+# # Copy application artifact using file provisioner
+# echo "Copying application artifact"
+# sudo cp /home/csye6225/webapp.zip /opt/application/
 
 # Unzip the webapp artifact
 echo "Unzipping the application artifact"
-sudo unzip /opt/application/webapp.zip -d /opt/application/webapp
+sudo unzip /home/csye6225/webapp.zip -d /home/csye6225/webapp
 
-# Set ownership for the application files
-echo "Setting ownership for the application files"
-sudo chown -R csye6225:csye6225 /opt/application
+# # Set ownership for the application files
+# echo "Setting ownership for the application files"
+# sudo chown -R csye6225:csye6225 /opt/application
 
 # Create MySQL database and user
 echo "Creating MySQL database and user"
@@ -56,16 +56,16 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
-cd /opt/application/webapp
+cd /home/csye6225/webapp
 sudo npm install
 sudo npm install mysql2@2.2.5
-sudo touch .env
-sudo chmod 777 .env
+# sudo touch .env
+# sudo chmod 777 .env
 
-echo "DB_HOST=localhost" >> .env
-echo "DB_USER=root" >> .env
-echo "DB_PASSWORD=root" >> .env
-echo "DB_NAME=webapp" >> .env
+# echo "DB_HOST=localhost" >> .env
+# echo "DB_USER=root" >> .env
+# echo "DB_PASSWORD=root" >> .env
+# echo "DB_NAME=webapp" >> .env
 
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
