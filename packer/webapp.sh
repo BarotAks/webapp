@@ -45,12 +45,6 @@ sudo unzip /opt/application/webapp.zip -d /opt/application/webapp
 echo "Setting ownership for the application files"
 sudo chown -R csye6225:csye6225 /opt/application
 
-# Navigate to the webapp directory and install node modules
-echo "Installing node modules"
-cd /opt/application/webapp
-sudo npm install
-sudo npm install mysql2@2.2.5
-
 # Create MySQL database and user
 echo "Creating MySQL database and user"
 sudo systemctl start mariadb
@@ -59,6 +53,19 @@ sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
 sudo mysql -e "CREATE USER 'csye6225'@'localhost' IDENTIFIED BY 'aksh';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'csye6225'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
+
+# Navigate to the webapp directory and install node modules
+echo "Installing node modules"
+cd /opt/application/webapp
+sudo npm install
+sudo npm install mysql2@2.2.5
+sudo touch .env
+sudo chmod 777 .env
+
+echo "DB_HOST=localhost" >> .env
+echo "DB_USER=csye6225" >> .env
+echo "DB_PASSWORD=aksh" >> .env
+echo "DB_NAME=webapp" >> .env
 
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
