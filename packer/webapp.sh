@@ -49,14 +49,27 @@ sudo unzip /home/admin/webapp.zip -d /home/admin/webapp
 echo "Creating MySQL database and user"
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
-sudo mysql -u root -proot -e 'CREATE DATABASE webapp;'
-sudo mysql -u root -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
-sudo mysql -u root -proot -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost' IDENTIFIED BY 'root';"
-sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
+# sudo mysql -u root -proot -e 'CREATE DATABASE webapp;'
+# sudo mysql -u root -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
+# sudo mysql -u root -proot -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost' IDENTIFIED BY 'root';"
+# sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
 # sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
 # sudo mysql -e "CREATE USER IF NOT EXISTS'root'@'localhost' IDENTIFIED BY 'root';"
 # sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
 # sudo mysql -e "FLUSH PRIVILEGES;"
+
+# Wait for MariaDB to start (optional, depending on system speed)
+sleep 10
+
+# Set up root password for MySQL (if not already set)
+sudo mysqladmin -u root password "root" || true
+
+# Create database and user with appropriate privileges
+sudo mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS webapp;"
+sudo mysql -u root -proot -e "CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY 'root';"
+sudo mysql -u root -proot -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
+sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
+
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
