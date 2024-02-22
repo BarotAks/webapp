@@ -57,7 +57,7 @@ build {
   provisioner "file" {
     source      = "../webapp.zip"
     destination = "/home/csye6225/webapp.zip"
-  }
+  
 
   provisioner "file" {
     source      = "./webapp.service"
