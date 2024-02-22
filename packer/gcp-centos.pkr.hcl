@@ -36,11 +36,12 @@ variable "ssh_username" {
 
 # Define builders
 source "googlecompute" "webapp_ami" {
-  project_id   = var.gcp_project_id
-  source_image = var.source_image
-  machine_type = "n1-standard-1"
-  zone         = var.zone
-  ssh_username = var.ssh_username
+  project_id            = var.gcp_project_id
+  source_image          = var.source_image
+  machine_type          = "n1-standard-1"
+  zone                  = var.zone
+  ssh_username          = var.ssh_username
+  service_account_email = var.service_account_email
 
   image_name = "webappami-${formatdate("YYYYMMDDHHmmss", timestamp())}"
 }
