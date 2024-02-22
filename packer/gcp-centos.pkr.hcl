@@ -51,7 +51,7 @@ source "googlecompute" "webapp_ami" {
 }
 
 # Build custom image
-build {
+    build {
   sources = ["source.googlecompute.webapp_ami"]
 
   provisioner "file" {
@@ -73,6 +73,6 @@ build {
       "sudo yum clean all",
       "sudo rm -rf /var/cache/yum"
     ]
-  
+  }
 
 }
