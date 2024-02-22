@@ -77,7 +77,7 @@ sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
-cd /home/admin/webapp
+cd /home/csye6225/webapp
 sudo npm install
 sudo npm install mysql2@2.2.5
 # sudo touch .env
