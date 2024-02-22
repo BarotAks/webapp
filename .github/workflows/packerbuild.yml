@@ -37,15 +37,41 @@ jobs:
         working-directory: packer
 
       - name: Authenticate with GCP
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
 
       - name: Use gcloud CLI
         run: gcloud info 
+
+      - name: Display .env file
+        run: |
+          echo "DB_USER=${DB_USER}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "DB_NAME=${DB_NAME}" >> .env
+          echo "DB_HOST=${DB_HOST}" >> .env
+          cat .env
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+           node-version: 14
+        
+      - name: Install dependencies
+        run: npm install 
+
+      - name: Configure MySQL
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y curl  
+            sudo apt-get install -y mysql-client
+            sudo systemctl start mysql
+            sudo systemctl status mysql
+            sleep 10
+            mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"  
         
       - name: Run Integration tests
         run: |
@@ -55,7 +81,7 @@ jobs:
             echo "Tests failed."
             exit 1
           fi
-          
+
       - name: Build AMI with Packer
         run: packer build gcp-centos.pkr.hcl
         working-directory: packer
