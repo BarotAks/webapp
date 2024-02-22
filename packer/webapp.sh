@@ -3,6 +3,10 @@
 # Exit immediately if any command exits with a non-zero status (error)
 set -e
 
+# Disable SELinux temporarily
+echo "Disabling SELinux temporarily"
+sudo setenforce 0
+
 # Update the system packages
 echo "Updating the system"
 sudo yum update -y
