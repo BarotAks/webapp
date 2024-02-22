@@ -56,6 +56,15 @@ jobs:
       - name: Install dependencies
         run: npm install 
 
+      - name: Configure MySQL
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y curl
+            sudo systemctl start mysql
+            sudo systemctl status mysql
+            sleep 10
+            mysql -u root -p"root" -e "CREATE DATABASE webapp;"
+            
       - name: Run Integration tests
         run: |
           if npm run test:integration; then
@@ -64,7 +73,7 @@ jobs:
             echo "Tests failed."
             exit 1
           fi
-          
+
       - name: Initialize Packer
         run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
         working-directory: packer
