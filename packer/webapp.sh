@@ -43,7 +43,7 @@ sudo yum install -y mariadb-server
 
 # Unzip the webapp artifact
 echo "Unzipping the application artifact"
-sudo unzip /home/admin/webapp.zip -d /home/admin/webapp
+sudo unzip /home/csye6225/webapp.zip -d /home/csye6225/webapp
 
 # # Set ownership for the application files
 # echo "Setting ownership for the application files"
