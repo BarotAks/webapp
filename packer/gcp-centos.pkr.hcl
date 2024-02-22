@@ -33,12 +33,16 @@ variable "ssh_username" {
   default = "csye6225"
 }
 
+variable "machine_type" {
+  type    = string
+  default = "n1-standard-1"
+}
 
 # Define builders
 source "googlecompute" "webapp_ami" {
   project_id            = var.gcp_project_id
   source_image          = var.source_image
-  machine_type          = "n1-standard-1"
+  machine_type          = var.machine_type
   zone                  = var.zone
   ssh_username          = var.ssh_username
   service_account_email = var.service_account_email

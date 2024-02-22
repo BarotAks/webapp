@@ -35,33 +35,10 @@ jobs:
         run: zip -r webapp.zip . -x ".git/*" ".gitignore" ".github/*"
         
       - name: Print Contents of Directory
-        run: ls -l
-    
-      - name: Initialize Packer
-        run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
-        working-directory: packer
-      
-      - name: Format Packer template
-        run: packer fmt -check -diff gcp-centos.pkr.hcl 
-        working-directory: packer
-
-      - name: Validate Packer template
-        run: packer validate gcp-centos.pkr.hcl   
-        working-directory: packer    
+        run: ls -l   
   
       - name: List contents of webapp.zip
         run: unzip -l ./webapp.zip  
-
-      - name: Authenticate with GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
-      - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Use gcloud CLI
-        run: gcloud info 
 
       - name: Display .env file
         run: |
@@ -79,16 +56,6 @@ jobs:
       - name: Install dependencies
         run: npm install 
 
-      - name: Configure MySQL
-        run: |
-            sudo apt-get update
-            sudo apt-get install -y curl  
-            sudo apt-get install -y mysql-client
-            sudo systemctl start mysql
-            sudo systemctl status mysql
-            sleep 10
-            mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS webapp;"
-
       - name: Run Integration tests
         run: |
           if npm run test:integration; then
@@ -97,10 +64,18 @@ jobs:
             echo "Tests failed."
             exit 1
           fi
-
-      - name: Build AMI with Packer
-        run: packer build gcp-centos.pkr.hcl
+          
+      - name: Initialize Packer
+        run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
         working-directory: packer
+        
+      - name: Format Packer template
+        run: packer fmt -check -diff gcp-centos.pkr.hcl 
+        working-directory: packer
+  
+      - name: Validate Packer template
+        run: packer validate gcp-centos.pkr.hcl   
+        working-directory: packer 
 
 
 
