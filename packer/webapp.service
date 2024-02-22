@@ -1,14 +1,14 @@
 [Unit]
 Description=webapp
-After=network.target mariadb.service
+After=network.target cloud-final.service
 
 [Service]
+WorkingDirectory=/home/admin/webapp
+Environment=NODE_PORT=3000
 Type=simple
 User=admin
-WorkingDirectory=/home/admin/webapp
-ExecStart=/usr/bin/node /home/admin/webapp/app.js
+ExecStart=/usr/bin/node /home/admin/webapp/index.js
 Restart=on-failure
 
-
 [Install]
-WantedBy=multi-user.target
+WantedBy=cloud-init.target

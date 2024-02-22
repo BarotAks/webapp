@@ -49,10 +49,14 @@ sudo unzip /home/admin/webapp.zip -d /home/admin/webapp
 echo "Creating MySQL database and user"
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
-sudo mysql -e "CREATE USER IF NOT EXISTS'root'@'localhost' IDENTIFIED BY 'root';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
-sudo mysql -e "FLUSH PRIVILEGES;"
+sudo mysql -u root -proot -e 'CREATE DATABASE webapp;'
+sudo mysql -u root -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
+sudo mysql -u root -proot -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost' IDENTIFIED BY 'root';"
+sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
+# sudo mysql -e "CREATE DATABASE IF NOT EXISTS webapp;"
+# sudo mysql -e "CREATE USER IF NOT EXISTS'root'@'localhost' IDENTIFIED BY 'root';"
+# sudo mysql -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
+# sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
