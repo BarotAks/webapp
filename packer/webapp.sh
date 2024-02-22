@@ -39,7 +39,7 @@ sudo yum install -y mariadb-server
 
 # Unzip the webapp artifact
 echo "Unzipping the application artifact"
-sudo unzip /home/csye6225/webapp.zip -d /home/csye6225/webapp
+sudo unzip /home/admin/webapp.zip -d /home/admin/webapp
 
 # # Set ownership for the application files
 # echo "Setting ownership for the application files"
@@ -56,7 +56,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
-cd /home/csye6225/webapp
+cd /home/admin/webapp
 sudo npm install
 sudo npm install mysql2@2.2.5
 # sudo touch .env

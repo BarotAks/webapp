@@ -4,10 +4,9 @@ After=network.target mariadb.service
 
 [Service]
 Type=simple
-User=csye6225
-Group=csye6225
-WorkingDirectory=/home/csye6225/webapp
-ExecStart=/usr/bin/node /home/csye6225/webapp/app.js
+User=admin
+WorkingDirectory=/home/admin/webapp
+ExecStart=/usr/bin/node /home/admin/webapp/app.js
 Restart=on-failure
 
 
