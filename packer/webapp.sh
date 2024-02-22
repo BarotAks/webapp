@@ -26,12 +26,12 @@ echo "Installing mariadb-server"
 sudo yum install -y mariadb-server 
 
 # Create csye6225 group if it doesn't exist
-# echo "Creating csye6225 group"
-# sudo groupadd -r csye6225
+echo "Creating csye6225 group"
+sudo groupadd -r csye6225 || true
 
-# # Set up csye6225 user
-# echo "Setting up csye6225 user"
-# sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
+# Set up csye6225 user
+echo "Setting up csye6225 user"
+sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
 
 # # Create directory for the application
 # echo "Creating directory for the application"
@@ -45,9 +45,9 @@ sudo yum install -y mariadb-server
 echo "Unzipping the application artifact"
 sudo unzip /home/csye6225/webapp.zip -d /home/csye6225/webapp
 
-# # Set ownership for the application files
-# echo "Setting ownership for the application files"
-# sudo chown -R csye6225:csye6225 /opt/application
+# Set ownership for the application files
+echo "Setting ownership for the application files"
+sudo chown -R csye6225:csye6225 /home/csye6225/webapp
 
 # Create MySQL database and user
 echo "Creating MySQL database and user"
