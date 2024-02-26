@@ -1,6 +1,6 @@
 # WebApp
 
-This README provides an overview of the functionalities and endpoints available in the WebApp.
+This README provides an overview of the functionalities and endpoints available in the WebApp...
 
 ## Table of Contents
 
