@@ -21,7 +21,7 @@ variable "source_image" {
 variable "service_account_email" {
   type    = string
   default = "dev-sa@spring-outlet-406505.iam.gserviceaccount.com"
-}
+
 
 variable "zone" {
   type    = string
