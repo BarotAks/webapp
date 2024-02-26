@@ -40,7 +40,7 @@ variable "machine_type" {
 
 # Define builders
 source "googlecompute" "webapp_ami" {
-  project_id            = var.gcp_project_id
+  project_id            =   var.gcp_project_id
   source_image          = var.source_image
   machine_type          = var.machine_type
   zone                  = var.zone
