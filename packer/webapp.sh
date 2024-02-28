@@ -21,9 +21,9 @@ sudo yum install -y nodejs
 echo "Installing unzip"
 sudo yum install -y unzip
 
-# Install application dependencies
-echo "Installing mariadb-server"
-sudo yum install -y mariadb-server 
+# # Install application dependencies
+# echo "Installing mariadb-server"
+# sudo yum install -y mariadb-server 
 
 # Create csye6225 group if it doesn't exist
 echo "Creating csye6225 group"
@@ -32,6 +32,10 @@ sudo groupadd -r csye6225 || true
 # Set up csye6225 user
 echo "Setting up csye6225 user"
 sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
+
+# Modify the csye6225 user's shell to /usr/sbin/nologin
+echo "Modifying csye6225 user's shell"
+sudo usermod -s /usr/sbin/nologin csye6225 || true
 
 # # Create directory for the application
 # echo "Creating directory for the application"
