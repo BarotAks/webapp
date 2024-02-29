@@ -78,12 +78,6 @@ sudo chown -R csye6225:csye6225 /home/csye6225/webapp
 # sudo mysql -u root -proot -e "GRANT ALL PRIVILEGES ON webapp.* TO 'root'@'localhost';"
 # sudo mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
-# Set environment variables for database connection
-export DB_HOST="${google_sql_database_instance.my_sql_instance.first_ip_address}"
-export DB_USER="${google_sql_user.my_user.name}"
-export DB_PASSWORD="${random_password.db_password.result}"
-export DB_NAME="${google_sql_database.my_database.name}"
-
 # Navigate to the webapp directory and install node modules
 echo "Installing node modules"
 cd /home/csye6225/webapp
@@ -92,17 +86,24 @@ sudo npm install mysql2@2.2.5
 # sudo touch .env
 # sudo chmod 777 .env
 
+# Create .env file if it doesn't exist
+echo "Creating .env file if it doesn't exist"
+sudo touch /home/csye6225/webapp/.env
+
+# Set permissions for .env file
+sudo chmod 644 /home/csye6225/webapp/.env
+
+# Set environment variables for database connection
+echo "Setting environment variables for database connection"
+echo "DB_HOST=\${google_sql_database_instance.my_sql_instance.first_ip_address}" | sudo tee -a /home/csye6225/webapp/.env
+echo "DB_USER=\${google_sql_user.my_user.name}" | sudo tee -a /home/csye6225/webapp/.env
+echo "DB_PASSWORD=\${random_password.db_password.result}" | sudo tee -a /home/csye6225/webapp/.env
+echo "DB_NAME=\${google_sql_database.my_database.name}" | sudo tee -a /home/csye6225/webapp/.env
+
 # echo "DB_HOST=localhost" >> .env
 # echo "DB_USER=root" >> .env
 # echo "DB_PASSWORD=root" >> .env
 # echo "DB_NAME=webapp" >> .env
-
-# # Set environment variables for database connection
-# export DB_HOST="${DB_HOST}"
-# export DB_USER="${DB_USER}"
-# export DB_PASSWORD="${DB_PASSWORD}"
-# export DB_NAME="${DB_NAME}"
-
 
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
