@@ -5,6 +5,7 @@ After=network.target
 [Service]
 WorkingDirectory=/home/csye6225/webapp
 Environment=NODE_PORT=3000
+EnvironmentFile=/home/csye6225/webapp/.env
 Type=simple
 User=csye6225
 Group=csye6225
