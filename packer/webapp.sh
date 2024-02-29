@@ -86,24 +86,14 @@ sudo npm install mysql2@2.2.5
 # sudo touch .env
 # sudo chmod 777 .env
 
-# Create .env file if it doesn't exist
-echo "Creating .env file if it doesn't exist"
-sudo touch /home/csye6225/webapp/.env
-
-# Set permissions for .env file
-sudo chmod 644 /home/csye6225/webapp/.env
-
-# Set environment variables for database connection
-echo "Setting environment variables for database connection"
-echo "DB_HOST=${DB_HOST}" >> /home/csye6225/webapp/.env
-echo "DB_USER=${DB_USER}" >> /home/csye6225/webapp/.env
-echo "DB_PASSWORD=${DB_PASSWORD}" >> /home/csye6225/webapp/.env
-echo "DB_NAME=${DB_NAME}" >> /home/csye6225/webapp/.env
-
 # echo "DB_HOST=localhost" >> .env
 # echo "DB_USER=root" >> .env
 # echo "DB_PASSWORD=root" >> .env
 # echo "DB_NAME=webapp" >> .env
+
+# Source the .env file to load environment variables
+echo "Sourcing .env file"
+source /home/csye6225/webapp/.env
 
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
