@@ -91,15 +91,11 @@ sudo npm install mysql2@2.2.5
 # echo "DB_PASSWORD=root" >> .env
 # echo "DB_NAME=webapp" >> .env
 
-# Source the .env file to load environment variables
-echo "Sourcing .env file"
-source /home/csye6225/webapp/.env
-
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
 sudo cp /tmp/webapp.service /etc/systemd/system/webapp.service
-sudo systemctl daemon-reload
-sudo systemctl start webapp.service
-sudo systemctl enable webapp.service
+# sudo systemctl daemon-reload
+# sudo systemctl start webapp.service
+# sudo systemctl enable webapp.service
 
 echo "Script executed successfully!"
