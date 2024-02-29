@@ -83,8 +83,8 @@ echo "Installing node modules"
 cd /home/csye6225/webapp
 sudo npm install
 sudo npm install mysql2@2.2.5
-# sudo touch .env
-# sudo chmod 777 .env
+sudo touch .env
+sudo chmod 777 .env
 
 # echo "DB_HOST=localhost" >> .env
 # echo "DB_USER=root" >> .env
