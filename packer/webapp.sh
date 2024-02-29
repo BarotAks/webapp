@@ -95,10 +95,10 @@ sudo chmod 644 /home/csye6225/webapp/.env
 
 # Set environment variables for database connection
 echo "Setting environment variables for database connection"
-echo "DB_HOST=\${google_sql_database_instance.my_sql_instance.first_ip_address}" | sudo tee -a /home/csye6225/webapp/.env
-echo "DB_USER=\${google_sql_user.my_user.name}" | sudo tee -a /home/csye6225/webapp/.env
-echo "DB_PASSWORD=\${random_password.db_password.result}" | sudo tee -a /home/csye6225/webapp/.env
-echo "DB_NAME=\${google_sql_database.my_database.name}" | sudo tee -a /home/csye6225/webapp/.env
+echo "DB_HOST=${google_sql_database_instance.my_sql_instance.first_ip_address}" >> /home/csye6225/webapp/.env
+echo "DB_USER=${google_sql_user.my_user.name}" >> /home/csye6225/webapp/.env
+echo "DB_PASSWORD=${random_password.db_password.result}" >> /home/csye6225/webapp/.env
+echo "DB_NAME=${google_sql_database.my_database.name}" >> /home/csye6225/webapp/.env
 
 # echo "DB_HOST=localhost" >> .env
 # echo "DB_USER=root" >> .env
