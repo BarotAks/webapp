@@ -1,6 +1,6 @@
 [Unit]
 Description=Web Application
-After=network.target mariadb.service
+After=network.target 
 
 [Service]
 WorkingDirectory=/home/csye6225/webapp
@@ -8,6 +8,7 @@ Environment=NODE_PORT=3000
 Type=simple
 User=csye6225
 Group=csye6225
+ExecStartPre=/bin/bash -c '/home/csye6225/webapp/packer/webapp.sh && sleep 5'
 ExecStart=/usr/bin/node /home/csye6225/webapp/app.js
 Restart=on-failure
 
