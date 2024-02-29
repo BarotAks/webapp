@@ -85,3 +85,4 @@ jobs:
       - name: Validate Packer template
         run: packer validate gcp-centos.pkr.hcl   
         working-directory: packer 
+        
