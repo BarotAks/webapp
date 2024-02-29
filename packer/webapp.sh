@@ -35,7 +35,7 @@ sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225 || true
 
 # Modify the csye6225 user's shell to /usr/sbin/nologin
 echo "Modifying csye6225 user's shell"
-sudo usermod --shell /usr/sbin/nologin csye6225 || true
+# sudo usermod --shell /usr/sbin/nologin csye6225 || true
 
 # # Create directory for the application
 # echo "Creating directory for the application"
