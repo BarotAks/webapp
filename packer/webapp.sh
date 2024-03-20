@@ -99,15 +99,15 @@ sudo cp /tmp/ops-agent-config.yaml /home/csye6225/webapp/ops-agent-config.yaml
 echo "Installing and configuring Ops Agent"
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
-sudo yum install -y ops-agent
+sudo yum install -y google-cloud-ops-agent
         
 # Start the Ops Agent
 echo "Starting Ops Agent"
-sudo systemctl start opsagent
+sudo systemctl start google-cloud-ops-agent
         
 # Enable the Ops Agent to start on boot
 echo "Enabling Ops Agent to start on boot"        
-sudo systemctl enable opsagent
+sudo systemctl enable google-cloud-ops-agent
 
 # Copy the systemd service file and start the service
 echo "Setting up and starting the webapp service"
