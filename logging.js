@@ -21,7 +21,11 @@ const fileOptions = {
 // Create a logger instance
 const logger = createLogger({
   levels: logLevels,
-  format: format.combine(format.timestamp(), format.json()),
+  format: format.combine(format.timestamp(), format.json(),
+  format.printf(({ level, message, timestamp }) => {
+    return `${timestamp} [${level.toUpperCase()}] ${message}`;
+  })
+  ),
   transports: [
     new transports.File(fileOptions),
   ],
