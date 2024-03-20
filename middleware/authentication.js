@@ -1,6 +1,7 @@
 const basicAuth = require('basic-auth');
 const bcrypt = require('bcrypt');
 const User = require('../models/users');
+const logger = require('../logging');
 
 const authenticate = async (req, res, next) => {
   try {
@@ -10,6 +11,7 @@ const authenticate = async (req, res, next) => {
     }
 
     // Extract credentials from Basic Authentication header
+    logger.debug('Authentication process started');
     const credentials = basicAuth(req);
 
     // Ensure credentials are provided
@@ -35,7 +37,8 @@ const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
+    // console.error('Authentication error:', error);
+    logger.error('Authentication error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

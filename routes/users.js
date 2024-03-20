@@ -7,17 +7,18 @@ const User = require('../models/users');
 const sequelize = require('../config/database');
 const bodyParser = require('body-parser'); // Import bodyParser
 const { Op } = require('sequelize');
+const logger = require('../logging');
 
 // Middleware to handle unsupported methods and payload checks
 router.use('/healthz', bodyParser.json());
 router.use('/healthz', (req, res, next) => {
     if (req.method !== 'GET') {
         // Reject non-GET requests
-        console.log(`Rejected ${req.method} request at /healthz. Only GET requests are allowed.`);
+        logger.warn(`Rejected ${req.method} request at /healthz. Only GET requests are allowed.`);
         res.status(405).header('Allow', 'GET').header('Cache-Control', 'no-cache, no-store, must-revalidate').send();
     } else if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
         // Reject requests with query parameters or body payload
-        console.log(`Rejected GET request at /healthz with query parameters or body payload.`);
+        logger.warn(`Rejected GET request at /healthz with query parameters or body payload.`);
         res.status(400).json({ error: 'Query parameters or body payload are not allowed for health check.' });
     } else {
       next();
@@ -28,11 +29,11 @@ router.use('/healthz', (req, res, next) => {
 router.get('/healthz', async (req, res) => {
     try {
         await sequelize.authenticate();
-        console.log('Database connection successful.');
+        logger.info('Database connection successful.');
         res.status(200).header('Cache-Control', 'no-cache, no-store, must-revalidate').send('OK');
     } catch (error) {
-        console.error('Database connection error:', error);
-        console.log('Database connection failed.');
+        logger.error('Database connection error:', error);
+        logger.debug('Database connection failed.');
         res.status(503).header('Cache-Control', 'no-cache, no-store, must-revalidate').json({ error: 'Service Unavailable' });
     }
 });
@@ -45,17 +46,19 @@ router.get('/v1/user/self', async (req, res) => {
     });
     
     if (!user) {
+      logger.warn('User not found');
       return res.status(404).json({ error: 'User not found' });
     }
 
           // Check for query parameters
           if (Object.keys(req.query).length > 0) {
+            logger.warn('Query parameters are not allowed for this endpoint');
             return res.status(400).json({ error: 'Query parameters are not allowed for this endpoint' });
           }
-    
+    logger.info('User information retrieved successfully');
     res.status(200).json(user);
   } catch (error) {
-    console.error(error);
+    logger.error('Error fetching user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -67,22 +70,26 @@ router.put('/v1/user/self', async (req, res) => {
 
       // Check for blank request body
       if (!first_name && !last_name && !password) {
+        logger.warn('Request body cannot be blank. Please provide at least one field to update.');
         return res.status(400).json({ error: 'Request body cannot be blank. Please provide at least one field to update.' });
       }
 
       // Check for extra fields in the request body
       const extraFields = Object.keys(req.body).filter(field => !['first_name', 'last_name', 'password'].includes(field));
       if (extraFields.length > 0) {
+        logger.warn('Extra fields are not allowed. Please provide only first_name, last_name, and password');
         return res.status(400).json({ error: 'Extra fields are not allowed. Please provide only first_name, last_name, and password' });
       }
      // Check for query parameters
          if (Object.keys(req.query).length > 0) {
+            logger.warn('Query parameters are not allowed for this endpoint');
             return res.status(400).json({ error: 'Query parameters are not allowed for this endpoint' });
                       }
   
       // Fetch user by ID
       const user = await User.findByPk(req.user.id);
       if (!user) {
+        logger.warn('User not found');
         return res.status(404).json({ error: 'User not found' });
       }
   
@@ -98,9 +105,10 @@ router.put('/v1/user/self', async (req, res) => {
   
       await user.save();
   
+      logger.info('User information updated successfully');
       res.status(204).end();
     } catch (error) {
-      console.error(error);
+      logger.error('Error updating user information:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });  
@@ -113,6 +121,7 @@ router.post('/v1/user', async (req, res) => {
 
     // Check if required fields are provided
     if (!first_name || !last_name || !password || !username) {
+      logger.warn('Required fields are missing. Please provide first_name, last_name, password, and username');
       return res.status(400).json({ error: 'Required fields are missing. Please provide first_name, last_name, password, and username' });
     }
 
@@ -120,18 +129,21 @@ router.post('/v1/user', async (req, res) => {
     const allowedFields = ['first_name', 'last_name', 'password', 'username'];
     const extraFields = Object.keys(req.body).filter(field => !allowedFields.includes(field));
     if (extraFields.length > 0) {
+      logger.warn('Extra fields are not allowed. Please provide only first_name, last_name, password, and username');
       return res.status(400).json({ error: 'Extra fields are not allowed. Please provide only first_name, last_name, password, and username' });
     }
 
     // Validate username format (ensure it is an email address)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
+      logger.warn('Invalid username format. Please provide a valid email address');
       return res.status(400).json({ error: 'Invalid username format. Please provide a valid email address' });
     }
 
     // Check if user with email already exists
     const existingUser = await User.findOne({ where: { username: username } });
     if (existingUser) {
+      logger.warn('User with this email already exists');
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
@@ -157,14 +169,16 @@ router.post('/v1/user', async (req, res) => {
       account_updated: newUser.account_updated
     };
 
+    logger.info('New user created:', responseUser);
     res.status(201).json(responseUser);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       // Handle validation errors (e.g., invalid email format)
+      logger.error('Validation error:', error.errors[0].message);
       return res.status(400).json({ error: error.errors[0].message });
     } else {
       // Handle other types of errors
-      console.error(error);
+      logger.error('Internal Server Error:', error);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
@@ -172,6 +186,7 @@ router.post('/v1/user', async (req, res) => {
 
 // Wildcard route handler for 404 Not Found
 router.use('*', (req, res) => {
+    logger.warn('Route not found:', req.originalUrl);
     res.status(404).json({ error: 'Not Found' });
   });
 
