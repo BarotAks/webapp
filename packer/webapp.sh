@@ -93,7 +93,7 @@ sudo chmod 777 .env
 
 # Copy the Ops Agent configuration file to the appropriate location
 echo "Copying Ops Agent configuration"
-sudo cp /tmp/ops-agent-config.yaml /etc/google-cloud/ops-agent/config.yaml
+sudo cp /tmp/ops-agent-config.yaml /home/csye6225/webapp/ops-agent-config.yaml
         
 # Download and install the Ops Agent package
 echo "Installing and configuring Ops Agent"
