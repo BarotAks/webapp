@@ -23,7 +23,11 @@ const logger = createLogger({
   levels: logLevels,
   format: format.combine(format.timestamp(), format.json(),
   format.printf(({ level, message, timestamp }) => {
-    return `${timestamp} [${level.toUpperCase()}] ${message}`;
+    return JSON.stringify({
+      severity: level.toUpperCase(), 
+      message,
+      timestamp,
+    });
   })
   ),
   transports: [
