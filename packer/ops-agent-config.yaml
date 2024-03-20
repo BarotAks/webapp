@@ -17,3 +17,5 @@ logging:
       default_pipeline:
         receivers: [webapp-receiver]
         processors: [webapp-processor]
+        output:
+          logging.googleapis.com/severity_field: level
