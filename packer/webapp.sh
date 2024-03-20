@@ -91,15 +91,19 @@ sudo chmod 777 .env
 # echo "DB_PASSWORD=root" >> .env
 # echo "DB_NAME=webapp" >> .env
 
-# Copy the Ops Agent configuration file to the appropriate location
-echo "Copying Ops Agent configuration"
-sudo cp /tmp/ops-agent-config.yaml /etc/google-cloud-ops-agent/config.yaml
+# # Copy the Ops Agent configuration file to the appropriate location
+# echo "Copying Ops Agent configuration"
+# sudo cp /tmp/ops-agent-config.yaml /etc/google-cloud-ops-agent/config.yaml
         
 # Download and install the Ops Agent package
 echo "Installing and configuring Ops Agent"
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 sudo yum install -y google-cloud-ops-agent
+
+# Copy the Ops Agent configuration file to the appropriate location
+echo "Copying Ops Agent configuration"
+sudo cp /tmp/ops-agent-config.yaml /etc/google-cloud-ops-agent/config.yaml
         
 # Start the Ops Agent
 echo "Starting Ops Agent"
