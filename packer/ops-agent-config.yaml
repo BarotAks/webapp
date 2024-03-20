@@ -11,11 +11,14 @@ logging:
       type: parse_json
       time_key: time
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
+    move_severity:
+      type: modify_fields
+      files:
+        severity: 
+          move_from: jsonPayload.severity
 
   service:
     pipelines:
       default_pipeline:
         receivers: [webapp-receiver]
-        processors: [webapp-processor]
-        output:
-          logging.googleapis.com/severity_field: level
+        processors: [webapp-processor, move_severity]
