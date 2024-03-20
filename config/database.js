@@ -1,6 +1,7 @@
 // config/database.js
 
 const Sequelize = require('sequelize');
+const logger = require('../logging');
 
 const sequelize = new Sequelize({
   dialect: 'mysql',
@@ -18,10 +19,12 @@ const sequelize = new Sequelize({
 // Synchronize models with the database
 sequelize.sync()
   .then(() => {
-    console.log('Database synchronized successfully');
+    // console.log('Database synchronized successfully');
+    logger.info('Database synchronized successfully');
   })
   .catch((error) => {
-    console.error('Error synchronizing database:', error);
+    // console.error('Error synchronizing database:', error);
+    logger.error('Error synchronizing database:', error);
   });
 
 module.exports = sequelize;
