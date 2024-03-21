@@ -13,9 +13,9 @@ logging:
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
     move_severity:
       type: modify_fields
-      files:
-        severity: 
-          move_from: jsonPayload.severity
+      fields:
+        severity:
+          from: jsonPayload.severity
 
   service:
     pipelines:
