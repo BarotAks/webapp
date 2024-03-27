@@ -33,7 +33,7 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Doe',
         username: 'johndoe@example.com',
         password: 'password123',
-        verified: false, // Set verified status to true to skip verification
+        verified: true, // Set verified status to true to skip verification
         verificationToken: null, // Set verificationToken to null for testing
       };
   
