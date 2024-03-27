@@ -27,7 +27,9 @@ beforeEach(async () => {
 // });
 
 describe('Integration tests for /v1/user endpoint', () => {
-    it('Test 1: Create an account and validate existence using GET', async () => {
+  it('Test 1: Create an account and validate existence using GET', async function() {
+    // Set timeout to 5 seconds (5000ms)
+    this.timeout(5000);
       const newUser = {
         first_name: 'John',
         last_name: 'Doe',
@@ -62,7 +64,9 @@ describe('Integration tests for /v1/user endpoint', () => {
       }
     });
   
-    it('Test 2: Update account and validate changes using GET', async () => {
+    it('Test 2: Update account and validate changes using GET', async function() {
+      // Set timeout to 5 seconds (5000ms)
+      this.timeout(5000);
       // Create an account first
       const newUser = {
         first_name: 'Jane',

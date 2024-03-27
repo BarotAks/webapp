@@ -65,15 +65,18 @@ jobs:
             sleep 10
             mysql -u root -p"root" -e "CREATE DATABASE webapp;"
             
-      - name: Run Integration tests
-        run: |
-          if npm run test:integration; then
-            echo "Tests passed successfully."
-          else
-            echo "Tests failed."
-            exit 1
-          fi
+      # - name: Run Integration tests
+      #   run: |
+      #     if npm run test:integration; then
+      #       echo "Tests passed successfully."
+      #     else
+      #       echo "Tests failed."
+      #       exit 1
+      #     fi
 
+      - name: Run Unit tests
+        run : npm run test:integration
+        
       - name: Initialize Packer
         run: packer init -upgrade gcp-centos.pkr.hcl || exit 1
         working-directory: packer
