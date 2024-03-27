@@ -33,8 +33,8 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Doe',
         username: 'johndoe@example.com',
         password: 'password123',
-        verified: true, // Set verified status to true to skip verification
-        verificationToken: null, // Set verificationToken to null for testing
+        // verified: true, // Set verified status to true to skip verification
+        // verificationToken: null, // Set verificationToken to null for testing
       };
   
       // Create an account
@@ -59,8 +59,8 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Doe',
         username: 'janedoe@example.com',
         password: 'password123',
-        verificationToken: null, // Default verification token
-        verified: true, // Default verified status
+        // verificationToken: null, // Default verification token
+        // verified: true, // Default verified status
       };
       const createResponse = await request(app)
         .post('/v1/user')
