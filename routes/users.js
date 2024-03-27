@@ -171,7 +171,7 @@ router.post('/v1/user', async (req, res) => {
     // Publish message to Pub/Sub topic
     const topicID = process.env.PUBSUB_TOPIC;
 
-    const topicName = 'projects/${process.env.PROJECT_ID}/topics/${topicId}';
+    const topicName = `projects/${process.env.PROJECT_ID}/topics/${topicId}`;
     const data = {
         email: username,
         firstName: first_name,
@@ -180,7 +180,7 @@ router.post('/v1/user', async (req, res) => {
     };
     const dataBuffer = Buffer.from(JSON.stringify(data));
 
-    await pubSubClient.topic(topicName).publish(dataBuffer);
+    await pubSubClient.topic(topicName).publishMessage({ data: dataBuffer });
 
 
     // Exclude password from the response payload
