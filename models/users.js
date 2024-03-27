@@ -43,10 +43,10 @@ const User = sequelize.define('User', {
     allowNull: true, // Initially, verification token can be null until generated
     unique: true, // Each user should have a unique verification token
   },
-  verificationExpiration: {
-    type: DataTypes.DATE, // Store the expiration time for verification token
-    allowNull: true, // Initially, expiration time can be null until generated
-  },
+  // verificationExpiration: {
+  //   type: DataTypes.DATE, // Store the expiration time for verification token
+  //   allowNull: true, // Initially, expiration time can be null until generated
+  // },
   verified: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
