@@ -27,7 +27,7 @@ const User = sequelize.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false
-  // },
+  },
   // account_created: {
   //   type: DataTypes.DATE,
   //   allowNull: false,
@@ -37,7 +37,21 @@ const User = sequelize.define('User', {
   //   type: DataTypes.DATE,
   //   allowNull: false,
   //   defaultValue: DataTypes.NOW
-  }
+  // }
+  verificationToken: {
+    type: DataTypes.UUID, 
+    allowNull: true, // Initially, verification token can be null until generated
+    unique: true, // Each user should have a unique verification token
+  },
+  verificationExpiration: {
+    type: DataTypes.DATE, // Store the expiration time for verification token
+    allowNull: true, // Initially, expiration time can be null until generated
+  },
+  verified: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false, // Initially, user is not verified until they complete verification
+  },
 });
 
 module.exports = User;

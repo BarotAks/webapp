@@ -85,4 +85,19 @@ jobs:
       - name: Validate Packer template
         run: packer validate gcp-centos.pkr.hcl   
         working-directory: packer 
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Use gcloud CLI
+        run: gcloud info 
+
+      - name: Build AMI with Packer
+        run: packer build gcp-centos.pkr.hcl
+        working-directory: packer
         

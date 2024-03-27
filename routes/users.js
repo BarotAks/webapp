@@ -8,6 +8,10 @@ const sequelize = require('../config/database');
 const bodyParser = require('body-parser'); // Import bodyParser
 const { Op } = require('sequelize');
 const logger = require('../logging');
+const { PubSub } = require('@google-cloud/pubsub');
+const uuid = require('uuid');
+
+const pubSubClient = new PubSub();
 
 // Middleware to handle unsupported methods and payload checks
 router.use('/healthz', bodyParser.json());
@@ -32,8 +36,8 @@ router.get('/healthz', async (req, res) => {
         logger.info('Database connection successful.');
         res.status(200).header('Cache-Control', 'no-cache, no-store, must-revalidate').send('OK');
     } catch (error) {
-        logger.error('Database connection error:', error);
-        logger.debug('Database connection failed.');
+        // logger.error('Database connection error:', error);
+        logger.debug('Database connection failed.', error);
         res.status(503).header('Cache-Control', 'no-cache, no-store, must-revalidate').json({ error: 'Service Unavailable' });
     }
 });
@@ -146,6 +150,8 @@ router.post('/v1/user', async (req, res) => {
       logger.warn('User with this email already exists');
       return res.status(400).json({ error: 'User with this email already exists' });
     }
+    // Generate verification token (UUID)
+    const verificationToken = uuid.v4();
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -156,8 +162,26 @@ router.post('/v1/user', async (req, res) => {
       password: hashedPassword,
       first_name: first_name,
       last_name: last_name,
+      verificationToken: verificationToken,
+      verified: false, // Initial verified status
       account_created: new Date() // Set account_created to current time
     });
+
+    // Trigger email verification process
+    // Publish message to Pub/Sub topic
+    const topicID = process.env.PUBSUB_TOPIC;
+
+    const topicName = 'projects/${process.env.PROJECT_ID}/topics/${topicId}';
+    const data = {
+        email: username,
+        firstName: first_name,
+        lastName: last_name,
+        verificationToken: verificationToken // Pass verification token to the Cloud Function
+    };
+    const dataBuffer = Buffer.from(JSON.stringify(data));
+
+    await pubSubClient.topic(topicName).publish(dataBuffer);
+
 
     // Exclude password from the response payload
     const responseUser = {
@@ -183,6 +207,47 @@ router.post('/v1/user', async (req, res) => {
     }
   }
 });
+
+// Email verification endpoint
+router.get('/verify', async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    // Check if token is provided
+    if (!token) {
+      logger.warn('Verification token is missing.');
+      return res.status(400).json({ error: 'Verification token is missing.' });
+    }
+
+    // Find user by verification token
+    const user = await User.findOne({ where: { verificationToken: token } });
+    if (!user) {
+      logger.warn('User not found or already verified.');
+      return res.status(404).json({ error: 'User not found or already verified.' });
+    }
+
+    // Update user verification status
+    user.verified = true;
+    user.verificationToken = null; // Clear verification token
+    await user.save();
+
+    logger.info('User verified successfully');
+    res.status(200).send('User verified successfully');
+  } catch (error) {
+    logger.error('Error verifying user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Middleware to block API calls for unverified users
+router.use((req, res, next) => {
+  if (!req.user || !req.user.verified) {
+      logger.warn('Unauthorized access: User account not verified.');
+      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+  }
+  next();
+});
+
 
 // Wildcard route handler for 404 Not Found
 router.use('*', (req, res) => {
