@@ -35,8 +35,6 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Doe',
         username: 'johndoe@example.com',
         password: 'password123',
-        // verified: true, // Set verified status to true to skip verification
-        // verificationToken: null, // Set verificationToken to null for testing
       };
 
       try {
@@ -73,8 +71,6 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Doe',
         username: 'janedoe@example.com',
         password: 'password123',
-        // verificationToken: null, // Default verification token
-        // verified: true, // Default verified status
       };
       try {
         // Create the user
@@ -88,8 +84,8 @@ describe('Integration tests for /v1/user endpoint', () => {
     
         // Update user details with Basic Authentication headers
         const updatedData = {
-          first_name: 'Updated Jane',
-          last_name: 'Updated Doe',
+          first_name: 'Jane',
+          last_name: 'Kim',
         };
         const updateResponse = await request(app)
           .put(`/v1/user/self`)
