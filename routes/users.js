@@ -65,7 +65,7 @@ router.get('/v1/user/self', async (req, res) => {
             logger.warn('Query parameters are not allowed for this endpoint');
             return res.status(400).json({ error: 'Query parameters are not allowed for this endpoint' });
           }
-    logger.info('User information retrieved successfully');
+    logger.info('User information retrieved successfully'+ JSON.stringify(user));
     res.status(200).json(user);
   } catch (error) {
     logger.error('Error fetching user:', error);
@@ -207,7 +207,7 @@ router.post('/v1/user', async (req, res) => {
       account_updated: newUser.account_updated
     };
 
-    logger.info('New user created:', responseUser);
+    logger.info('New user created:', + JSON.stringify(responseUser));
     res.status(201).json(responseUser);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
