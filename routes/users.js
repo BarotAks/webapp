@@ -45,6 +45,12 @@ router.get('/healthz', async (req, res) => {
 // Get user information
 router.get('/v1/user/self', async (req, res) => {
   try {
+        // Check if user is verified
+        if (!req.user || !req.user.verified) {
+          logger.warn('Unauthorized access: User account not verified.');
+          return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+        }
+
     const user = await User.findByPk(req.user.id, {
       attributes: { exclude: ['password'] }
     });
@@ -70,6 +76,12 @@ router.get('/v1/user/self', async (req, res) => {
 // Update user information
 router.put('/v1/user/self', async (req, res) => {
     try {
+          // Check if user is verified
+    if (!req.user || !req.user.verified) {
+      logger.warn('Unauthorized access: User account not verified.');
+      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+    }
+
       const { first_name, last_name, password } = req.body;
 
       // Check for blank request body
@@ -164,16 +176,18 @@ router.post('/v1/user', async (req, res) => {
       last_name: last_name,
       verificationToken: verificationToken,
       verified: false, // Initial verified status
-      account_created: new Date() // Set account_created to current time
+      account_created: new Date(), // Set account_created to current time
+      verificationEmailSentAt: new Date(), // Set verificationEmailSentAt to current time
+      linkVerifiedAt: null // Initially, link not verified
     });
 
     // Trigger email verification process
     // Publish message to Pub/Sub topic
-    const topicID = process.env.PUBSUB_TOPIC;
+    // const topicID = process.env.PUBSUB_TOPIC;
 
-    const topicName = `projects/${process.env.PROJECT_ID}/topics/${topicId}`;
+    const topicName = `projects/${process.env.PROJECT_ID}/topics/${process.env.PUBSUB_TOPIC}`;
     const data = {
-        email: username,
+        username: username,
         firstName: first_name,
         lastName: last_name,
         verificationToken: verificationToken // Pass verification token to the Cloud Function
@@ -226,9 +240,10 @@ router.get('/verify', async (req, res) => {
       return res.status(404).json({ error: 'User not found or already verified.' });
     }
 
-    // Update user verification status
+    // Update user verification status to true
     user.verified = true;
     user.verificationToken = null; // Clear verification token
+    user.linkVerifiedAt = new Date(); // Set linkVerifiedAt to current time
     await user.save();
 
     logger.info('User verified successfully');

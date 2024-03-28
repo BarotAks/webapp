@@ -43,14 +43,20 @@ const User = sequelize.define('User', {
     allowNull: true, // Initially, verification token can be null until generated
     unique: true, // Each user should have a unique verification token
   },
-  // verificationExpiration: {
-  //   type: DataTypes.DATE, // Store the expiration time for verification token
-  //   allowNull: true, // Initially, expiration time can be null until generated
-  // },
   verified: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false, // Initially, user is not verified until they complete verification
+  },
+  verificationEmailSentAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null, // Initially, no email sent
+  },
+  linkVerifiedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null, // Initially, link not verified
   },
 });
 

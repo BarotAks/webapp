@@ -25,7 +25,7 @@ variable "service_account_email" {
 
 variable "zone" {
   type    = string
-  default = "us-east1-b"
+  default = "us-central1-a"
 }
 
 variable "ssh_username" {
