@@ -25,7 +25,7 @@ app.listen(PORT, async () => {
     logger.info('Database connected successfully');
   } catch (error) {
     // console.error('Unable to connect to the database:', error);
-    logger.error('Unable to connect to the database:', error);
+    logger.debug('Unable to connect to the database:', error);
   }
 });
 
