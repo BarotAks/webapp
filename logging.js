@@ -21,6 +21,7 @@ const fileOptions = {
 // Create a logger instance
 const logger = createLogger({
   levels: logLevels,
+  level: 'debug', // Set the logging level threshold to 'debug'
   format: format.combine(format.timestamp(), format.json(),
   format.printf(({ level, message, timestamp }) => {
     return JSON.stringify({
