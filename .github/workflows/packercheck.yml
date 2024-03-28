@@ -15,6 +15,8 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: ${{ secrets.DB_HOST }}
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        PUBSUB_TOPIC: ${{ secrets.PUBSUB_TOPIC }}
 
     steps:
       - name: Checkout
@@ -46,6 +48,8 @@ jobs:
           echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
           echo "DB_NAME=${DB_NAME}" >> .env
           echo "DB_HOST=${DB_HOST}" >> .env
+          echo "PROJECT_ID=${PROJECT_ID}" >> .env
+          echo "PUBSUB_TOPIC=${PUBSUB_TOPIC}" >> .env
           cat .env
 
       - name: Setup node
