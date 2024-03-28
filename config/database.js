@@ -2,6 +2,9 @@
 
 const Sequelize = require('sequelize');
 const logger = require('../logging');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const sequelize = new Sequelize({
   dialect: 'mysql',
@@ -20,11 +23,11 @@ const sequelize = new Sequelize({
 sequelize.sync()
   .then(() => {
     // console.log('Database synchronized successfully');
-    logger.debug('Database synchronized successfully');
+    logger.info('Database synchronized successfully');
   })
   .catch((error) => {
     // console.error('Error synchronizing database:', error);
-    logger.debug('Error synchronizing database:', error);
+    logger.error('Error synchronizing database:', error);
   });
 
 module.exports = sequelize;

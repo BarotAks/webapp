@@ -10,6 +10,9 @@ const { Op } = require('sequelize');
 const logger = require('../logging');
 const { PubSub } = require('@google-cloud/pubsub');
 const uuid = require('uuid');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const pubSubClient = new PubSub();
 
@@ -36,8 +39,8 @@ router.get('/healthz', async (req, res) => {
         logger.debug('Database connection successful.');
         res.status(200).header('Cache-Control', 'no-cache, no-store, must-revalidate').send('OK');
     } catch (error) {
-        // logger.error('Database connection error:', error);
-        logger.debug('Database connection failed.', error);
+        logger.error('Database connection error:', error);
+        // logger.debug('Database connection failed.', error);
         res.status(503).header('Cache-Control', 'no-cache, no-store, must-revalidate').json({ error: 'Service Unavailable' });
     }
 });
@@ -181,6 +184,19 @@ router.post('/v1/user', async (req, res) => {
       linkVerifiedAt: null // Initially, link not verified
     });
 
+    // Exclude password from the response payload
+    const responseUser = {
+      id: newUser.id,
+      first_name: newUser.first_name,
+      last_name: newUser.last_name,
+      username: newUser.username,
+      account_created: newUser.account_created,
+      account_updated: newUser.account_updated
+    };
+
+    logger.info('New user created:', + JSON.stringify(responseUser));
+    res.status(201).json(responseUser);
+
     // Trigger email verification process
     // Publish message to Pub/Sub topic
     // const topicID = process.env.PUBSUB_TOPIC;
@@ -196,19 +212,6 @@ router.post('/v1/user', async (req, res) => {
 
     await pubSubClient.topic(topicName).publishMessage({ data: dataBuffer });
 
-
-    // Exclude password from the response payload
-    const responseUser = {
-      id: newUser.id,
-      first_name: newUser.first_name,
-      last_name: newUser.last_name,
-      username: newUser.username,
-      account_created: newUser.account_created,
-      account_updated: newUser.account_updated
-    };
-
-    logger.info('New user created:', + JSON.stringify(responseUser));
-    res.status(201).json(responseUser);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       // Handle validation errors (e.g., invalid email format)
