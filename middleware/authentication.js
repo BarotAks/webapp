@@ -6,7 +6,7 @@ const logger = require('../logging');
 const authenticate = async (req, res, next) => {
   try {
     // Skip authentication for certain endpoints
-    if (req.path === '/healthz' || req.path === '/v1/user' || req.path === '*') {
+    if (req.path === '/healthz' || req.path === '/v1/user' || req.path === '*' || req.path === '/v1/user/verify' ) {
         return next();
     }
 
@@ -35,6 +35,7 @@ const authenticate = async (req, res, next) => {
 
     // Set authenticated user in request object
     req.user = user;
+    logger.debug('Authentication process done');
     next();
   } catch (error) {
     // console.error('Authentication error:', error);

@@ -33,7 +33,7 @@ router.use('/healthz', (req, res, next) => {
 router.get('/healthz', async (req, res) => {
     try {
         await sequelize.authenticate();
-        logger.info('Database connection successful.');
+        logger.debug('Database connection successful.');
         res.status(200).header('Cache-Control', 'no-cache, no-store, must-revalidate').send('OK');
     } catch (error) {
         // logger.error('Database connection error:', error);
@@ -159,7 +159,7 @@ router.post('/v1/user', async (req, res) => {
     // Check if user with email already exists
     const existingUser = await User.findOne({ where: { username: username } });
     if (existingUser) {
-      logger.warn('User with this email already exists');
+      logger.error('User with this email already exists');
       return res.status(400).json({ error: 'User with this email already exists' });
     }
     // Generate verification token (UUID)
@@ -184,7 +184,7 @@ router.post('/v1/user', async (req, res) => {
     // Trigger email verification process
     // Publish message to Pub/Sub topic
     // const topicID = process.env.PUBSUB_TOPIC;
-
+    
     const topicName = `projects/${process.env.PROJECT_ID}/topics/${process.env.PUBSUB_TOPIC}`;
     const data = {
         username: username,
@@ -222,8 +222,22 @@ router.post('/v1/user', async (req, res) => {
   }
 });
 
+// Middleware to block API calls for unverified users
+router.use((req, res, next) => {
+  if (req.path === '/v1/user/verify') {
+    // Skip the middleware for the verification endpoint
+    return next();
+  }
+
+  if (!req.user || !req.user.verified) {
+      logger.warn('Unauthorized access: User account not verified.');
+      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+  }
+  next();
+});
+
 // Email verification endpoint
-router.get('/verify', async (req, res) => {
+router.get('/v1/user/verify', async (req, res) => {
   try {
     const { token } = req.query;
 
@@ -240,6 +254,15 @@ router.get('/verify', async (req, res) => {
       return res.status(404).json({ error: 'User not found or already verified.' });
     }
 
+    // Check if the verification link has expired (compare with current time)
+    const linkExpirationTime = 2 * 60 * 1000; // 2 minutes in milliseconds
+    const currentTime = new Date();
+    const tokenExpirationTime = new Date(user.verificationEmailSentAt.getTime() + linkExpirationTime);
+    if (currentTime > tokenExpirationTime) {
+      logger.warn('Verification link has expired.');
+      return res.status(400).json({ error: 'Verification link has expired.' });
+    }
+
     // Update user verification status to true
     user.verified = true;
     user.verificationToken = null; // Clear verification token
@@ -247,22 +270,15 @@ router.get('/verify', async (req, res) => {
     await user.save();
 
     logger.info('User verified successfully');
+    // Render a success message in the browser
+    // res.send('<h1>Verification Successful</h1><p>Your email has been successfully verified.</p>');
+    // Redirect to a success page or send a success message
     res.status(200).send('User verified successfully');
   } catch (error) {
     logger.error('Error verifying user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// Middleware to block API calls for unverified users
-router.use((req, res, next) => {
-  if (!req.user || !req.user.verified) {
-      logger.warn('Unauthorized access: User account not verified.');
-      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
-  }
-  next();
-});
-
 
 // Wildcard route handler for 404 Not Found
 router.use('*', (req, res) => {
