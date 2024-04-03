@@ -51,7 +51,7 @@ router.get('/v1/user/self', async (req, res) => {
         // Check if user is verified
         if (!req.user || !req.user.verified) {
           logger.warn('Unauthorized access: User account not verified.');
-          return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+          return res.status(403).json({ error: 'Unauthorized access: User account not verified.' });
         }
 
     const user = await User.findByPk(req.user.id, {
@@ -82,7 +82,7 @@ router.put('/v1/user/self', async (req, res) => {
           // Check if user is verified
     if (!req.user || !req.user.verified) {
       logger.warn('Unauthorized access: User account not verified.');
-      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+      return res.status(403).json({ error: 'Unauthorized access: User account not verified.' });
     }
 
       const { first_name, last_name, password } = req.body;
@@ -234,7 +234,7 @@ router.use((req, res, next) => {
 
   if (!req.user || !req.user.verified) {
       logger.warn('Unauthorized access: User account not verified.');
-      return res.status(401).json({ error: 'Unauthorized access: User account not verified.' });
+      return res.status(403).json({ error: 'Unauthorized access: User account not verified.' });
   }
   next();
 });
