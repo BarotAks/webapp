@@ -91,3 +91,50 @@ jobs:
       - name: Build AMI with Packer
         run: packer build gcp-centos.pkr.hcl
         working-directory: packer
+
+      - name: Get Machine Image ID and save it to Github env
+        run: |
+          echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
+        shell: bash
+
+      - name: Create New Instance Template Version
+        run: |
+          gcloud compute instance-templates create-version new-template \
+          --source-instance-template "webapp-instance-template-*" \
+          --machine-image = ${{ env.IMAGE_ID }} \
+          --metadata = startup-s
+          --project ${{ secrets.PROJECT_ID }}
+
+      - name: Configure Managed Instance Group
+        run: |
+          gcloud compute instance-groups managed set-instance-template web-instance-group-manager \
+          --template new-template \
+          --zone us-east1-b \
+          --project ${{ secrets.PROJECT_ID }}
+          
+      - name: Start Rolling Update
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update web-instance-group-manager \
+          --version new-template \
+          --zone us-east1-b \
+          --project ${{ secrets.PROJECT_ID }}
+
+      - name: Monitor Update Progress
+        id: monitor_update
+        run: |
+          status=$(gcloud compute instance-groups managed describe web-instance-group-manager \
+            --zone us-east1-b \
+            --format='value(instanceGroupStatus.versionStatus[0].status)' \
+            --project ${{ secrets.PROJECT_ID }})
+          echo "::set-output name=status::$status"
+
+      - name: Wait for Update Completion
+        run: |
+          while [[ "$(steps.monitor_update.outputs.status)" != "UP_TO_DATE" ]]; do
+            sleep 10
+            status=$(gcloud compute instance-groups managed describe web-instance-group-manager \
+              --zone us-east1-b \
+              --format='value(instanceGroupStatus.versionStatus[0].status)' \
+              --project ${{ secrets.PROJECT_ID }})
+            echo "Current status: $status"
+          done
