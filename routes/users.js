@@ -55,7 +55,7 @@ router.get('/v1/user/self', async (req, res) => {
         }
 
     const user = await User.findByPk(req.user.id, {
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password', 'verificationToken', 'verified', 'verificationEmailSentAt', 'linkVerifiedAt'] }
     });
     
     if (!user) {
