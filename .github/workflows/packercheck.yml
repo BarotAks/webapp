@@ -121,7 +121,7 @@ jobs:
 
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME="new-webapp-instance-*"
+          INSTANCE_NAME="new-webapp-instance"
           gcloud compute instance-templates create "${INSTANCE_NAME}" \
           --source-instance="${INSTANCE_TEMPLATE_LINK}" \
           --image=${{ env.IMAGE_ID }} \
