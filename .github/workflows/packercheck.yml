@@ -119,14 +119,14 @@ jobs:
 
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME = "webapp-instance-*"
+          INSTANCE_NAME="webapp-instance-*"
           gcloud compute instance-templates create "${INSTANCE_NAME}" \
-          --source-instance-template = "${{ env.INSTANCE_TEMPLATE_LINK }}" \
+          --source-instance-template="${{ env.INSTANCE_TEMPLATE_LINK }}" \
           --image=${{ env.IMAGE_ID }} \
-          --project ${{ secrets.PROJECT_ID }} \
+          --project=${{ secrets.PROJECT_ID }} \
           --zone us-east1-b
-          NEW_INSTANCE_TEMPLATE = $(gcloud compute instance-templates create-from-instance new-template
-          --instance-template-name =  "webapp-instance-template-*" \
+          NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance new-template
+          --instance-template-name="webapp-instance-template-*" \
           --instance-template-project="${{secrets.PROJECT_ID}}" \
           --format='value(selflink)') 
           gcloud compute instance delete "${INSTANCE_NAME}" --quiet
