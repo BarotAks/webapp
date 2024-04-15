@@ -111,44 +111,54 @@ jobs:
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
+      - name: Get terraform output
+        run: |
+          INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_link) >> $GITHUB_ENV
+          INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link) >> $GITHUB_ENV
+        shell: bash
+
       - name: Create New Instance Template Version
         run: |
-          gcloud compute instance-templates create new-template \
-          --source-instance-template "webapp-instance-template-*" \
-          --machine-image=${{ env.IMAGE_ID }} \
-          --metadata="${{secrets.MMETADATA_SCRIPT}}" \
-          --project ${{ secrets.PROJECT_ID }}
+          INSTANCE_NAME = "webapp-instance-*"
+          gcloud compute instance-templates create "${INSTANCE_NAME}" \
+          --source-instance-template = "${{ env.INSTANCE_TEMPLATE_LINK }}" \
+          --image=${{ env.IMAGE_ID }} \
+          --project ${{ secrets.PROJECT_ID }} \
+          --zone us-east1-b
+          NEW_INSTANCE_TEMPLATE = $(gcloud compute instance-templates create-from-instance new-template
+          --instance-template-name =  "webapp-instance-template-*" \
+          --instance-template-project="${{secrets.PROJECT_ID}}" \
+          --format='value(selflink)') 
+          gcloud compute instance delete "${INSTANCE_NAME}" --quiet
 
       - name: Configure Managed Instance Group
         run: |
-          gcloud compute instance-groups managed set-instance-template web-instance-group-manager \
-          --template new-template \
-          --zone us-east1-b \
-          --project ${{ secrets.PROJECT_ID }}
+          gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_LINK}" \
+          --template "${NEW_INSTANCE_TEMPLATE}" \
+          --region us-east1 
           
       - name: Start Rolling Update
         run: |
-          gcloud compute instance-groups managed rolling-action start-update web-instance-group-manager \
-          --version new-template \
-          --zone us-east1-b \
-          --project ${{ secrets.PROJECT_ID }}
+          gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_LINK}" \
+          --region us-east1 \
+          --max-unavailable "0" \
+          --min-ready "2" \
 
       - name: Monitor Update Progress
-        id: monitor_update
         run: |
-          status=$(gcloud compute instance-groups managed describe web-instance-group-manager \
-            --zone us-east1-b \
-            --format='value(instanceGroupStatus.versionStatus[0].status)' \
-            --project ${{ secrets.PROJECT_ID }})
-          echo "::set-output name=status::$status"
-
-      - name: Wait for Update Completion
-        run: |
-          while [[ "$(steps.monitor_update.outputs.status)" != "UP_TO_DATE" ]]; do
+          STATUS="ROLLING_OUT"
+          while [[ $STATUS == "ROLLING_OUT" ]]
+           do
+            STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_LINK}" \
+            --region us-east1 \
+            --format='value(status)' )
+            echo "Current status: $STATUS"
             sleep 10
-            status=$(gcloud compute instance-groups managed describe web-instance-group-manager \
-              --zone us-east1-b \
-              --format='value(instanceGroupStatus.versionStatus[0].status)' \
-              --project ${{ secrets.PROJECT_ID }})
-            echo "Current status: $status"
           done
+
+          if [[ $STATUS == "ROLLED_OUT" ]]
+           then
+            exit 0
+          else
+            exit 1
+          fi
