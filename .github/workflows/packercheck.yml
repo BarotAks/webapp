@@ -128,12 +128,6 @@ jobs:
           --project=${{ secrets.PROJECT_ID }} \
           --region="us-east1" \
           --format='value(selfLink)'
-          # NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance new-template
-          # --instance-template-name="webapp-instance-template-*" \
-          # --instance-template-project="${{secrets.PROJECT_ID}}" \
-          # --zone="us-east1-b" \
-          # --format='value(selflink)') 
-          # gcloud compute instance delete "${INSTANCE_NAME}" --quiet
 
       - name: Configure Managed Instance Group
         run: |
