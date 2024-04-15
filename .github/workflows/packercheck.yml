@@ -115,6 +115,8 @@ jobs:
         run: |
           INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_link) >> $GITHUB_ENV
           INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link) >> $GITHUB_ENV
+          echo $INSTANCE_TEMPLATE_LINK
+          echo $INSTANCE_GROUP_MANAGER_LINK
         shell: bash
 
       - name: Create New Instance Template Version
@@ -124,7 +126,7 @@ jobs:
           --source-instance-template="${{ env.INSTANCE_TEMPLATE_LINK }}" \
           --image=${{ env.IMAGE_ID }} \
           --project=${{ secrets.PROJECT_ID }} \
-          --zone us-east1-b
+          --zone="us-east1-b"
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance new-template
           --instance-template-name="webapp-instance-template-*" \
           --instance-template-project="${{secrets.PROJECT_ID}}" \
@@ -135,12 +137,12 @@ jobs:
         run: |
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_LINK}" \
           --template "${NEW_INSTANCE_TEMPLATE}" \
-          --region us-east1 
+          --region="us-east1" 
           
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_LINK}" \
-          --region us-east1 \
+          --region="us-east1" \
           --max-unavailable "0" \
           --min-ready "2" \
 
@@ -150,7 +152,7 @@ jobs:
           while [[ $STATUS == "ROLLING_OUT" ]]
            do
             STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_LINK}" \
-            --region us-east1 \
+            --region="us-east1" \
             --format='value(status)' )
             echo "Current status: $STATUS"
             sleep 10
