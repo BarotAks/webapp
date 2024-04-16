@@ -6,7 +6,7 @@ const logger = require('../logging');
 const authenticate = async (req, res, next) => {
   try {
     // Skip authentication for certain endpoints
-    if (req.path === '/healthz' || req.path === '/v1/user' || req.path === '*' || req.path === '/v1/user/verify' ) {
+    if (req.path === '/healthz' || req.path === '/v2/user' || req.path === '*' || req.path === '/v2/user/verify' ) {
         return next();
     }
 
