@@ -152,20 +152,21 @@ jobs:
           
       - name: Monitor Update
         run: |
-            STATUS="ROLLING_OUT"
-            while [[ $STATUS == "ROLLING_OUT" ]]
-            do
-              INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
+          STATUS="ROLLING_OUT"
+          while [[ $STATUS == "ROLLING_OUT" ]]
+          do
+            INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" \
               --region=us-central1 \
               --format=json)
-              STATUS=$(echo "${INSTANCE_GROUP_STATUS}" | jq -r '.status')
-              echo "Instance group is $STATUS"
-              sleep 10
-            done
-         
-            if [[ $STATUS == "ROLLED_OUT" ]]
-            then
-              exit 0
-            else
-              exit 1
-            fi
+            STATUS=$(echo "$INSTANCE_GROUP_STATUS" | jq -r '.isStable')
+            echo "Instance group is $STATUS"
+            sleep 10
+          done
+          
+          if [[ $STATUS == "true" ]]
+          then
+            exit 0
+          else
+            exit 1
+          fi
+        
