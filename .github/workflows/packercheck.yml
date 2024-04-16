@@ -113,8 +113,8 @@ jobs:
 
       - name: Get terraform output
         run: |
-          INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_link) 
-          INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link) 
+          INSTANCE_TEMPLATE_LINK=$(jq -r '.outputs.instance_template_link.value' terraform.tfstate) 
+          INSTANCE_GROUP_MANAGER_LINK=$(jq -r '.outputs.instance_group_manager_link.value' terraform.tfstate) 
           echo $INSTANCE_TEMPLATE_LINK
           echo $INSTANCE_GROUP_MANAGER_LINK
         shell: bash
