@@ -135,7 +135,7 @@ jobs:
         run: |
           INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format='value(NAME)')
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
-            --template "${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
+            --template="${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1
       
  
