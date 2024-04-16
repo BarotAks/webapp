@@ -26,7 +26,7 @@ beforeEach(async () => {
 //   await User.truncate({ cascade: true });
 // });
 
-describe('Integration tests for /v1/user endpoint', () => {
+describe('Integration tests for /v2/user endpoint', () => {
     it('Test 1: Create an account and validate existence using GET', async () => {
       const newUser = {
         first_name: 'John',
@@ -62,7 +62,7 @@ describe('Integration tests for /v1/user endpoint', () => {
         password: 'password123',
       };
       const createResponse = await request(app)
-        .post('/v1/user')
+        .post('/v2/user')
         .send(newUser);
       expect(createResponse.statusCode).to.equal(201);
 
@@ -75,14 +75,14 @@ describe('Integration tests for /v1/user endpoint', () => {
         last_name: 'Kim',
       };
       const updateResponse = await request(app)
-        .put(`/v1/user/self`)
+        .put(`/v2/user/self`)
         .auth(newUser.username, newUser.password) // Include Basic Authentication headers
         .send(updateData);
       expect(updateResponse.statusCode).to.equal(204); // No content on successful update
   
       // Retrieve updated user details
       const getUserResponse = await request(app)
-        .get(`/v1/user/self`)
+        .get(`/v2/user/self`)
         .auth(newUser.username, newUser.password); // Include Basic Authentication headers
       expect(getUserResponse.statusCode).to.equal(200); // Check if user exists in the database
       expect(getUserResponse.body.first_name).to.equal(updateData.first_name); // Validate updated details
