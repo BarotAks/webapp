@@ -111,14 +111,18 @@ jobs:
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
-      - name: Get terraform output
+      - name: Debug Terraform Outputs
         run: |
-          INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_self_link)
-          INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link)
-          echo "INSTANCE_TEMPLATE_LINK=${INSTANCE_TEMPLATE_LINK}"
-          echo "INSTANCE_GROUP_MANAGER_LINK=${INSTANCE_GROUP_MANAGER_LINK}"
-        shell: bash
+          terraform show
+          terraform output -json
 
+      - name: Get terraform outputs
+        run: |
+          INSTANCE_TEMPLATE_LINK="https://www.googleapis.com/compute/v1/projects/spring-outlet-406505/regions/us-east1/instanceTemplates/webapp-instance-template-20240415215810327100000001"
+          INSTANCE_GROUP_MANAGER_LINK="https://www.googleapis.com/compute/v1/projects/spring-outlet-406505/regions/us-east1/instanceGroupManagers/web-instance-group-manager"
+          echo "INSTANCE_TEMPLATE_LINK=$INSTANCE_TEMPLATE_LINK"
+          echo "  INSTANCE_GROUP_MANAGER_LINK=$INSTANCE_GROUP_MANAGER_LINK"        
+  
       - name: Create New Instance Template Version
         run: |
           INSTANCE_NAME="webapp-instance-$(date +%s)"
