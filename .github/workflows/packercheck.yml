@@ -113,10 +113,10 @@ jobs:
 
       - name: Get terraform output
         run: |
-          echo INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_self_link) 
-          echo INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link) 
-        env:
-          TF_STATE: C:/Users/akshi/Downloads/CSYE6225/tf-gcp-infra/terraform.tfstate
+          INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_self_link)
+          INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link)
+          echo "INSTANCE_TEMPLATE_LINK=${INSTANCE_TEMPLATE_LINK}"
+          echo "INSTANCE_GROUP_MANAGER_LINK=${INSTANCE_GROUP_MANAGER_LINK}"
         shell: bash
 
       - name: Create New Instance Template Version
