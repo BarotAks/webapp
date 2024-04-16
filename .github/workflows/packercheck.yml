@@ -114,7 +114,7 @@ jobs:
       - name: Create New Instance Template Version
         run: |
           INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(NAME)")
-          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-east1" --format="value(selfLink)")
+          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-central1" --format="value(selfLink)")
           INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format="value(NAME)")
           echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
           echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
@@ -126,7 +126,7 @@ jobs:
             --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
             --image="${IMAGE_ID}" \
             --image-project="${{ secrets.PROJECT_ID }}" \
-            --zone=us-east1-b
+            --zone=us-central1-a 
           NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
             --instance-template-name="webapp-template-${{ github.sha }}" \
             --instance-template-project="${{ secrets.PROJECT_ID }}" \
@@ -137,12 +137,12 @@ jobs:
         run: |
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
             --template "${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
-            --region=us-east1
+            --region=us-central1
  
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
-            --region=us-eas1 \
+            --region=us-central1 \
             --max-unavailable "0" \
             --min-ready "2"
      
@@ -152,7 +152,7 @@ jobs:
               while [[ $STATUS == "ROLLING_OUT" ]]
               do
                 STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
-                  --region=us-east1 \
+                  --region=us-central1 \
                   --format='value(status)')
                 echo "Instance group is $STATUS"
                 sleep 10
