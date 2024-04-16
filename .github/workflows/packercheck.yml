@@ -110,26 +110,17 @@ jobs:
           echo IMAGE_ID=webappami-20240410103802 >> $GITHUB_ENV
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
-
-      - name: Get Terraform Outputs
-        run: |
-          INSTANCE_TEMPLATE_SELF_LINK=$(terraform output -raw instance_template_self_link)
-          INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(terraform output -raw instance_group_manager_instance_group)
  
       - name: Create New Instance Template Version
         run: |
-          IMAGE_ID=${{ env.IMAGE_ID }}
+          INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(NAME)")
+          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-central1" --format="value(selfLink)")
+          INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format="value(NAME)")
+          echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
+          echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
+          echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" >> $GITHUB_ENV
           INSTANCE_NAME="webapp-instance-${{ github.sha }}"
-          gcloud compute instances create "${INSTANCE_NAME}" \
-            --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
-            --image="${IMAGE_ID}" \
-            --image-project="${{ secrets.PROJECT_ID }}" \
-            --zone="us-east1-b"
-          NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
-            --instance-template-name="webapp-template-${{ github.sha }}" \
-            --instance-template-project="${{ secrets.PROJECT_ID }}" \
-            --format='value(selfLink)')
-          gcloud compute instances delete "${INSTANCE_NAME}" --quiet
+          echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV
  
       - name: Update Managed Instance Group
         run: |
