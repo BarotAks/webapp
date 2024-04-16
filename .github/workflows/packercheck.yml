@@ -125,7 +125,7 @@ jobs:
           gcloud compute instances create "${INSTANCE_NAME}" \
           --source-instance-template="${INSTANCE_TEMPLATE_LINK}" \
           --image=${{ env.IMAGE_ID }} \
-          --image-project=${{ secrets.PROJECT_ID }} 
+          --image-project=${{ secrets.PROJECT_ID }} \
           --zone="us-east1-b"
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
           --instance-template-name="new-webapp-template-${{ github.sha}}" \
