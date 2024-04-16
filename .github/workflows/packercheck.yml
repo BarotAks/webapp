@@ -111,22 +111,12 @@ jobs:
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
-      - name: Get Instance Templates
-        run: |
-          INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(selfLink)")
-          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-east1" --format="value(selfLink)")
-          INSTANCE_GROUP_MANAGER_LINK=$(gcloud compute instance-groups list --format="value(NAME)")
-          echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
-          echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
-          echo "INSTANCE_GROUP_MANAGER_LINK=$INSTANCE_GROUP_MANAGER_LINK" >> $GITHUB_ENV
-          INSTANCE_NAME="webapp-instance-${{ github.sha }}"
-          echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV       
-    
       - name: Create New Instance Template Version
         run: |
           IMAGE_ID=${{ env.IMAGE_ID }}
+          INSTANCE_NAME="webapp-instance-${{ github.sha }}"
           gcloud compute instances create "${INSTANCE_NAME}" \
-          --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
+          --source-instance-template="$(gcloud compute instance-templates list --format="value(selfLink)")" \
           --image="${IMAGE_ID}" \
           --image-project="${{ secrets.PROJECT_ID }}" \
           --zone=us-east1-b
