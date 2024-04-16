@@ -130,12 +130,15 @@ jobs:
           NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create "webapp-template-${{ github.sha }}" \
             --source-instance="${INSTANCE_NAME}" \
             --source-instance-zone="us-central1-a" \
-            --format='value(selfLink)') >> $GITHUB_ENV
+            --format='value(selfLink)')
+          echo "NEW_INSTANCE_TEMPLATE_SELF_LINK=$NEW_INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
           gcloud compute instances delete "${INSTANCE_NAME}" --zone=us-central1-a --quiet
  
       - name: Update Managed Instance Group
         run: |
-          gcloud compute instance-groups managed set-instance-template "web-instance-group-manager" \
+          echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}"
+          echo "NEW_INSTANCE_TEMPLATE_SELF_LINK=${NEW_INSTANCE_TEMPLATE_SELF_LINK}"
+          gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
             --template="${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1
  
