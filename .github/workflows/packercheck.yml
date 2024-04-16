@@ -121,6 +121,17 @@ jobs:
           echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" >> $GITHUB_ENV
           INSTANCE_NAME="webapp-instance-${{ github.sha }}"
           echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV
+          IMAGE_ID=${{ env.IMAGE_ID }}
+          gcloud compute instances create "${INSTANCE_NAME}" \
+            --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
+            --image="${IMAGE_ID}" \
+            --image-project="${{ secrets.PROJECT_ID }}" \
+            --zone=us-east1-b
+          NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
+            --instance-template-name="webapp-template-${{ github.sha }}" \
+            --instance-template-project="${{ secrets.PROJECT_ID }}" \
+            --format='value(selfLink)')
+          gcloud compute instances delete "${INSTANCE_NAME}" --quiet
  
       - name: Update Managed Instance Group
         run: |
