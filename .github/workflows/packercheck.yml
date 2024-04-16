@@ -131,7 +131,7 @@ jobs:
             --source-instance="${INSTANCE_NAME}" \
             --source-instance-zone="us-central1-a" \
             --format='value(selfLink)')
-          gcloud compute instances delete "${INSTANCE_NAME}" --quiet
+          gcloud compute instances delete "${INSTANCE_NAME}" --zone=us-central1-a --quiet
  
       - name: Update Managed Instance Group
         run: |
