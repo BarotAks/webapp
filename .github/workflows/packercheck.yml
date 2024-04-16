@@ -111,11 +111,6 @@ jobs:
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
-      - name: Debug Terraform Outputs
-        run: |
-          terraform show
-          terraform output -json
-
       - name: Get terraform outputs
         run: |
           INSTANCE_TEMPLATE_LINK="https://www.googleapis.com/compute/v1/projects/spring-outlet-406505/regions/us-east1/instanceTemplates/webapp-instance-template-20240415215810327100000001"
@@ -128,8 +123,8 @@ jobs:
           INSTANCE_NAME="webapp-instance-$(date +%s)"
           IMAGE_ID=${{ env.IMAGE_ID }}
           gcloud compute instances create "${INSTANCE_NAME}" \
-          --source-instance-template="${INSTANCE_TEMPLATE_LINK}" \
-          --image="${IMAGE_ID}" \
+          --source-instance-template="$INSTANCE_TEMPLATE_LINK" \
+          --image="$IMAGE_ID" \
           --image-project="${{ secrets.PROJECT_ID }}" \
           --zone="us-east1-b"
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
