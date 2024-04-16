@@ -113,10 +113,8 @@ jobs:
 
       - name: Get terraform output
         run: |
-          INSTANCE_TEMPLATE_LINK=$(jq -r '.outputs.instance_template_link.value' ) 
-          INSTANCE_GROUP_MANAGER_LINK=$(jq -r '.outputs.instance_group_manager_link.value' ) 
-          echo $INSTANCE_TEMPLATE_LINK
-          echo $INSTANCE_GROUP_MANAGER_LINK
+          echo INSTANCE_TEMPLATE_LINK=$(jq -r '.outputs.instance_template_link.value' ) 
+          echo INSTANCE_GROUP_MANAGER_LINK=$(jq -r '.outputs.instance_group_manager_link.value' ) 
         shell: bash
 
       - name: Create New Instance Template Version
