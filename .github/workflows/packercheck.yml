@@ -115,6 +115,8 @@ jobs:
         run: |
           echo INSTANCE_TEMPLATE_LINK=$(terraform output -raw instance_template_self_link) 
           echo INSTANCE_GROUP_MANAGER_LINK=$(terraform output -raw instance_group_manager_link) 
+        env:
+          TF_STATE: C:\Users\akshi\Downloads\CSYE6225\tf-gcp-infra\terraform.tfstate
         shell: bash
 
       - name: Create New Instance Template Version
