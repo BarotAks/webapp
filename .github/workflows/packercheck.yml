@@ -115,8 +115,10 @@ jobs:
         run: |
           INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(NAME)")
           INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-central1" --format="value(selfLink)")
+          INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format="value(NAME)")
           echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
           echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
+          echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" >> $GITHUB_ENV
           INSTANCE_NAME="webapp-instance-${{ github.sha }}"
           echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV
           IMAGE_ID=${{ env.IMAGE_ID }}
@@ -133,11 +135,9 @@ jobs:
  
       - name: Update Managed Instance Group
         run: |
-          INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format='value(NAME)')
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
             --template="${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1
-      
  
       - name: Start Rolling Update
         run: |
