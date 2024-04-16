@@ -121,7 +121,7 @@ jobs:
 
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME="new-webapp-instance-${{ github.sha }}"
+          INSTANCE_NAME="webapp-instance-${{ github.sha }}"
           IMAGE_ID=${{ env.IMAGE_ID }}
           gcloud compute instances create "${INSTANCE_NAME}" \
           --source-instance-template="${INSTANCE_TEMPLATE_LINK}" \
@@ -129,24 +129,29 @@ jobs:
           --image-project="${{ secrets.PROJECT_ID }}" \
           --zone="us-east1-b"
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
-          --instance-template-name="new-webapp-template-${{ github.sha}}" \
+          --instance-template-name="webapp-template-${{ github.sha}}" \
           --instance-template-project="${{ secrets.PROJECT_ID }}" \
           --format='value(selfLink)')
           echo $NEW_INSTANCE_TEMPLATE
           gcloud compute instance-templates delete "${INSTANCE_NAME}" --quiet
+        shell: bash
 
       - name: Configure Managed Instance Group
         run: |
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_LINK}" \
           --template "${NEW_INSTANCE_TEMPLATE}" \
           --region="us-east1" 
+        shell: bash
           
+
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_LINK}" \
           --region="us-east1" \
           --max-unavailable "0" \
           --min-ready "2" \
+        shell: bash
+
 
       - name: Monitor Update Progress
         run: |
@@ -166,3 +171,4 @@ jobs:
           else
             exit 1
           fi
+        shell: bash
