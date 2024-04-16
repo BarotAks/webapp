@@ -123,10 +123,10 @@ jobs:
           INSTANCE_NAME="webapp-instance-$(date +%s)"
           IMAGE_ID=${{ env.IMAGE_ID }}
           gcloud compute instances create "${INSTANCE_NAME}" \
-          --source-instance-template="$INSTANCE_TEMPLATE_LINK" \
-          --image="$IMAGE_ID" \
-          --image-project="${{ secrets.PROJECT_ID }}" \
-          --zone="us-east1-b"
+          --source-instance-template=$INSTANCE_TEMPLATE_LINK \
+          --image=$IMAGE_ID \
+          --image-project=${{ secrets.PROJECT_ID }} \
+          --zone=us-east1-b
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
           --instance-template-name="webapp-template-$(date +%s)" \
           --instance-template-project="${{ secrets.PROJECT_ID }}" \
