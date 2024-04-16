@@ -127,7 +127,7 @@ jobs:
             --image="${IMAGE_ID}" \
             --image-project="${{ secrets.PROJECT_ID }}" \
             --zone=us-central1-a 
-          NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create "new-webapp-template" \
+          NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create "webapp-template-${{ github.sha }}" \
             --source-instance="${INSTANCE_NAME}" \
             --source-instance-zone="us-central1-a" \
             --format='value(selfLink)')
@@ -142,6 +142,7 @@ jobs:
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
+            --version template="${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1 \
             --max-unavailable "0" \
             --min-ready "2"
