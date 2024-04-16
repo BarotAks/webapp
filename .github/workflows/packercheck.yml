@@ -114,7 +114,7 @@ jobs:
       - name: Get Instance Templates
         run: |
           INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --filter="name=webapp-instance-template-*" --format="value(NAME)")
-          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe '${INSTANCE_TEMPLATE}' --region="us-east1" --format="value(selfLink)")
+          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-east1" --format="value(selfLink)")
           INSTANCE_GROUP_MANAGER_LINK=$(gcloud compute instance-groups list --format="value(NAME)")
           echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
           echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
