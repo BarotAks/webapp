@@ -121,7 +121,7 @@ jobs:
 
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME="webapp-instance-${{ github.sha }}"
+          INSTANCE_NAME="webapp-instance-$(date +%s)"
           IMAGE_ID=${{ env.IMAGE_ID }}
           gcloud compute instances create "${INSTANCE_NAME}" \
           --source-instance-template="${INSTANCE_TEMPLATE_LINK}" \
@@ -129,7 +129,7 @@ jobs:
           --image-project="${{ secrets.PROJECT_ID }}" \
           --zone="us-east1-b"
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
-          --instance-template-name="webapp-template-${{ github.sha}}" \
+          --instance-template-name="webapp-template-$(date +%s)" \
           --instance-template-project="${{ secrets.PROJECT_ID }}" \
           --format='value(selfLink)')
           echo $NEW_INSTANCE_TEMPLATE
