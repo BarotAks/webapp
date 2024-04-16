@@ -129,7 +129,7 @@ jobs:
             --zone=us-central1-a 
           NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create "new-webapp-template" \
             --source-instance="${INSTANCE_NAME}" \
-            --instance-template-project="${{ secrets.PROJECT_ID }}" \
+            --source-instance-zone="us-central1-a" \
             --format='value(selfLink)')
           gcloud compute instances delete "${INSTANCE_NAME}" --quiet
  
