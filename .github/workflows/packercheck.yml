@@ -121,13 +121,17 @@ jobs:
 
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME="new-webapp-instance"
-          gcloud compute instance-templates create "${INSTANCE_NAME}" \
-          --source-instance="${INSTANCE_TEMPLATE_LINK}" \
+          INSTANCE_NAME="new-webapp-instance-${{ github.sha }}"
+          gcloud compute instances create "${INSTANCE_NAME}" \
+          --source-instance-template="${INSTANCE_TEMPLATE_LINK}" \
           --image=${{ env.IMAGE_ID }} \
-          --project=${{ secrets.PROJECT_ID }} \
-          --region="us-east1" \
-          --format='value(selfLink)'
+          --image-project=${{ secrets.PROJECT_ID }} 
+          NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
+          --instance-template-name="new-webapp-template-${{ github.sha}}" \
+          --instance-template-project=${{ secrets.PROJECT_ID }} \
+          --format='value(selfLink)')
+          echo $NEW_INSTANCE_TEMPLATE
+          gcloud compute instance-templates delete "${INSTANCE_NAME}" --quiet
 
       - name: Configure Managed Instance Group
         run: |
