@@ -111,21 +111,24 @@ jobs:
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
-      - name: Get terraform outputs
+      - name: Get Instance Templates
         run: |
-          INSTANCE_TEMPLATE_LINK="https://www.googleapis.com/compute/v1/projects/spring-outlet-406505/regions/us-east1/instanceTemplates/webapp-instance-template-20240415215810327100000001"
-          INSTANCE_GROUP_MANAGER_LINK="https://www.googleapis.com/compute/v1/projects/spring-outlet-406505/regions/us-east1/instanceGroupManagers/web-instance-group-manager"
-          echo "INSTANCE_TEMPLATE_LINK=$INSTANCE_TEMPLATE_LINK"
-          echo "  INSTANCE_GROUP_MANAGER_LINK=$INSTANCE_GROUP_MANAGER_LINK"        
-  
+          INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(NAME)")
+          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-east1" --format="value(selfLink)")
+          INSTANCE_GROUP_MANAGER_LINK=$(gcloud compute instance-groups list --format="value(NAME)")
+          echo "INSTANCE_TEMPLATE=$INSTANCE_TEMPLATE" >> $GITHUB_ENV
+          echo "INSTANCE_TEMPLATE_SELF_LINK=$INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
+          echo "INSTANCE_GROUP_MANAGER_LINK=$INSTANCE_GROUP_MANAGER_LINK" >> $GITHUB_ENV
+          INSTANCE_NAME="webapp-instance-${{ github.sha }}"
+          echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV       
+    
       - name: Create New Instance Template Version
         run: |
-          INSTANCE_NAME="webapp-instance-$(date +%s)"
           IMAGE_ID=${{ env.IMAGE_ID }}
           gcloud compute instances create "${INSTANCE_NAME}" \
-          --source-instance-template=$INSTANCE_TEMPLATE_LINK \
-          --image=$IMAGE_ID \
-          --image-project=${{ secrets.PROJECT_ID }} \
+          --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
+          --image="${IMAGE_ID}" \
+          --image-project="${{ secrets.PROJECT_ID }}" \
           --zone=us-east1-b
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
           --instance-template-name="webapp-template-$(date +%s)" \
