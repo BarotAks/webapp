@@ -135,7 +135,7 @@ jobs:
           echo "NEW_INSTANCE_TEMPLATE_SELF_LINK=$NEW_INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
           gcloud compute instances delete "${INSTANCE_NAME}" --zone=us-central1-a --quiet
  
-      - name: Update Managed Instance Group
+      - name: Configure Managed Instance Group
         run: |
           echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}"
           echo "NEW_INSTANCE_TEMPLATE_SELF_LINK=${NEW_INSTANCE_TEMPLATE_SELF_LINK}"
@@ -150,12 +150,12 @@ jobs:
             --region=us-central1 \
             --max-unavailable "0" \
           
-      - name: Monitor Update
+      - name: Monitor Update Progress
         run: |
           STATUS="ROLLING_OUT"
           while [[ $STATUS == "ROLLING_OUT" ]]
           do
-            INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" \
+            INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "$(INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
               --region=us-central1 \
               --format=json)
             STATUS=$(echo "$INSTANCE_GROUP_STATUS" | jq -r '.isStable')
