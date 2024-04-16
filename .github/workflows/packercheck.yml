@@ -107,19 +107,21 @@ jobs:
 
       - name: Get Machine Image ID and save it to Github env
         run: |
-          echo IMAGE_ID=webappami-20240403090351 >> $GITHUB_ENV
+          echo IMAGE_ID=webappami-20240410103802 >> $GITHUB_ENV
           # echo IMAGE_ID=$(jq -r '.builds[0].artifact_id' ./packer/manifest.json | cut -d':' -f2) >> $GITHUB_ENV
         shell: bash
 
       - name: Create New Instance Template Version
         run: |
           IMAGE_ID=${{ env.IMAGE_ID }}
+          INSTANCE_TEMPLATE=$(gcloud compute instance-templates list --format="value(selfLink)")
+          INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates describe "${INSTANCE_TEMPLATE}" --region="us-east1" --format="value(selfLink)")
           INSTANCE_NAME="webapp-instance-${{ github.sha }}"
           gcloud compute instances create "${INSTANCE_NAME}" \
-          --source-instance-template="$(gcloud compute instance-templates list --format="value(selfLink)")" \
+          --source-instance-template="${INSTANCE_TEMPLATE_SELF_LINK}" \
           --image="${IMAGE_ID}" \
           --image-project="${{ secrets.PROJECT_ID }}" \
-          --zone=us-central1-a
+          --zone=us-east1-b
           NEW_INSTANCE_TEMPLATE=$(gcloud compute instance-templates create-from-instance "${INSTANCE_NAME}" \
           --instance-template-name="webapp-template-$(date +%s)" \
           --instance-template-project="${{ secrets.PROJECT_ID }}" \
@@ -132,14 +134,14 @@ jobs:
         run: |
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_LINK}" \
           --template "${NEW_INSTANCE_TEMPLATE}" \
-          --region="us-central1" 
+          --region="us-east1" 
         shell: bash
           
 
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update "${INSTANCE_GROUP_MANAGER_LINK}" \
-          --region="us-central1" \
+          --region="us-east1" \
           --max-unavailable "0" \
           --min-ready "2" \
         shell: bash
@@ -151,7 +153,7 @@ jobs:
           while [[ $STATUS == "ROLLING_OUT" ]]
            do
             STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_LINK}" \
-            --region="us-central1" \
+            --region="us-east1" \
             --format='value(status)' )
             echo "Current status: $STATUS"
             sleep 10
