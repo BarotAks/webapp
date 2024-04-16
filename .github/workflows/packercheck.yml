@@ -133,11 +133,11 @@ jobs:
  
       - name: Update Managed Instance Group
         run: |
-          echo INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format="value(NAME)") >> $GITHUB_ENV
-          # echo "INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$INSTANCE_GROUP_MANAGER_INSTANCE_GROUP" >> $GITHUB_ENV
+          INSTANCE_GROUP_MANAGER_INSTANCE_GROUP=$(gcloud compute instance-groups list --format='value(NAME)')
           gcloud compute instance-groups managed set-instance-template "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
-            --template "${{ env.NEW_INSTANCE_TEMPLATE_SELF_LINK }}" \
+            --template "${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1
+      
  
       - name: Start Rolling Update
         run: |
