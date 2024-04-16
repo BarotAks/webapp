@@ -149,7 +149,6 @@ jobs:
             --version template="${NEW_INSTANCE_TEMPLATE_SELF_LINK}" \
             --region=us-central1 \
             --max-unavailable "0" \
-            --min-ready "2"
      
       - name: Monitor Update
         run: |
