@@ -46,7 +46,7 @@ router.get('/healthz', async (req, res) => {
 });
 
 // Get user information
-router.get('/v1/user/self', async (req, res) => {
+router.get('/v2/user/self', async (req, res) => {
   try {
         // Check if user is verified
         if (!req.user || !req.user.verified) {
@@ -77,7 +77,7 @@ router.get('/v1/user/self', async (req, res) => {
 });
 
 // Update user information
-router.put('/v1/user/self', async (req, res) => {
+router.put('/v2/user/self', async (req, res) => {
     try {
           // Check if user is verified
     if (!req.user || !req.user.verified) {
@@ -134,7 +134,7 @@ router.put('/v1/user/self', async (req, res) => {
 
   
 // Create a new user
-router.post('/v1/user', async (req, res) => {
+router.post('/v2/user', async (req, res) => {
   try {
     const { first_name, last_name, password, username } = req.body;
 
@@ -227,7 +227,7 @@ router.post('/v1/user', async (req, res) => {
 
 // Middleware to block API calls for unverified users
 router.use((req, res, next) => {
-  if (req.path === '/v1/user/verify') {
+  if (req.path === '/v2/user/verify') {
     // Skip the middleware for the verification endpoint
     return next();
   }
@@ -240,7 +240,7 @@ router.use((req, res, next) => {
 });
 
 // Email verification endpoint
-router.get('/v1/user/verify', async (req, res) => {
+router.get('/v2/user/verify', async (req, res) => {
   try {
     const { token } = req.query;
 

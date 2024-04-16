@@ -37,7 +37,7 @@ describe('Integration tests for /v1/user endpoint', () => {
   
       // Create an account
       const createResponse = await request(app)
-        .post('/v1/user')
+        .post('/v2/user')
         .send(newUser);
       expect(createResponse.statusCode).to.equal(201); // Check for successful creation
 
@@ -46,7 +46,7 @@ describe('Integration tests for /v1/user endpoint', () => {
   
       // Retrieve the created user using Basic Authentication headers
       const getUserResponse = await request(app)
-        .get(`/v1/user/self`)
+        .get(`/v2/user/self`)
         .auth(newUser.username, newUser.password); // Include Basic Authentication headers
       expect(getUserResponse.statusCode).to.equal(200); // Check if user exists in the database
       expect(getUserResponse.body.username).to.equal(newUser.username); // Validate user details
