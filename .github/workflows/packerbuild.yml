@@ -118,6 +118,7 @@ jobs:
           NEW_INSTANCE_TEMPLATE_SELF_LINK=$(gcloud compute instance-templates create "webapp-template-${{ github.sha }}" \
             --source-instance="${INSTANCE_NAME}" \
             --source-instance-zone="us-central1-a" \
+            --image="${IMAGE_ID}" \
             --instance-template-region="us-central1" \
             --format='value(selfLink)')
           echo "NEW_INSTANCE_TEMPLATE_SELF_LINK=$NEW_INSTANCE_TEMPLATE_SELF_LINK" >> $GITHUB_ENV
@@ -143,7 +144,7 @@ jobs:
           STATUS="ROLLING_OUT"
           while [[ $STATUS == "ROLLING_OUT" ]]
           do
-            INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "$(INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
+            INSTANCE_GROUP_STATUS=$(gcloud compute instance-groups managed describe "${INSTANCE_GROUP_MANAGER_INSTANCE_GROUP}" \
               --region=us-central1 \
               --format=json)
             STATUS=$(echo "$INSTANCE_GROUP_STATUS" | jq -r '.isStable')
@@ -151,7 +152,7 @@ jobs:
             sleep 10
           done
           
-          if [[ $STATUS == "true" ]]
+          if [[ $STATUS == "ROLLED_OUT" ]]
           then
             exit 0
           else

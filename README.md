@@ -4,13 +4,15 @@ This README provides an overview of the functionalities and endpoints available 
 
 ## Table of Contents
 
-- [Description](#description)
-- [Endpoints](#endpoints)
-  - [Health Check](#health-check)
-  - [Get User Information](#get-user-information)
-  - [Update User Information](#update-user-information)
-  - [Create a New User](#create-a-new-user)
-- [Error Handling](#error-handling)
+- [WebApp](#webapp)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Endpoints](#endpoints)
+    - [Health Check](#health-check)
+    - [Get User Information](#get-user-information)
+    - [Update User Information](#update-user-information)
+    - [Create a New User](#create-a-new-user)
+  - [Error Handling](#error-handling)
 
 ## Description
 
@@ -33,7 +35,7 @@ The WebApp is a backend API built using Express.js for managing user information
 
 ### Get User Information
 
-- **Endpoint:** `/v1/user/self`
+- **Endpoint:** `/v2/user/self`
 - **Method:** GET
 - **Description:** Retrieves information about the authenticated user.
 - **Request Body:** N/A
@@ -46,7 +48,7 @@ The WebApp is a backend API built using Express.js for managing user information
 
 ### Update User Information
 
-- **Endpoint:** `/v1/user/self`
+- **Endpoint:** `/v2/user/self`
 - **Method:** PUT
 - **Description:** Updates information about the authenticated user.
 - **Request Body:** JSON object containing the fields to be updated (first_name, last_name, password)
@@ -59,7 +61,7 @@ The WebApp is a backend API built using Express.js for managing user information
 
 ### Create a New User
 
-- **Endpoint:** `/v1/user`
+- **Endpoint:** `/v2/user`
 - **Method:** POST
 - **Description:** Creates a new user.
 - **Request Body:** JSON object containing user information (first_name, last_name, password, username)
